@@ -12,9 +12,11 @@ const criteria = {
 
 const config = {
   name: 'vipimo',
-  defaultPath: 'csystem/construction',
+  defaultPath: 'csystem/home',
   defaultAppName: 'CSYMAPP',
-  version: '3.0.1'
+  version: '3.0.1',
+  apiRoot: 'http://localhost:3000/',
+  myRoot: 'http://localhost:8080/'
 
 };
 

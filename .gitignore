@@ -10,6 +10,8 @@ selenium-debug.log
 node_modules
 release
 
+todo
+
 # Editor directories and files
 .idea
 .vscode

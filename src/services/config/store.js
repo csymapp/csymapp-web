@@ -4,7 +4,7 @@ import VuexPersistence from 'vuex-persist';
 Vue.use(Vuex);
 
 const vuexLocal = new VuexPersistence({
-  key: 'bart',
+  key: 'csymapp',
   storage: window.localStorage
 });
 
@@ -15,7 +15,8 @@ export default new Vuex.Store({
     user: {
       defaultprofilepic: '/static/images/4e14f517d239010c439617922dc13543.png',
       profilepic: null,
-      defaultEmail: 'guest@cseco.co.ke'
+      defaultEmail: 'guest@cseco.co.ke',
+      userdata: {}
     },
     isLoggedIn: false,
     starting: {

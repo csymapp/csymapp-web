@@ -9,6 +9,10 @@ import PageHeader from '@/components/PageHeader';
 import menu from '@/api/menu';
 import ThemeSettings from '@/components/ThemeSettings';
 import AppEvents from  './event';
+
+import config from '@/services/config'
+import authService from '@/apps/csystem/services/auth'
+import to from 'await-to-js';
 export default {
   components: {
     AppDrawer,
@@ -58,21 +62,28 @@ export default {
     window.getApp = this;
     
   },
-  mounted () {
-    if(localStorage.startingNow === undefined)  {
-      localStorage.startingNow =  JSON.stringify({
-        theme:true,
-        dark: true
-      });
+  async mounted () {
+    let urlParams = new URLSearchParams(window.location.search);
+    let self = this,
+      params = urlParams.toString(),
+      token = urlParams.get('token');
+    if (token) {
+      let [err, care] = await to(authService().loginusingToken(token));
+      if(err)
+        window.getApp.$emit('ERROR_EVT',  err.data.error);
+      else {
+        self.$store.state.isLoggedIn = true;
+        let user = care.data
+        self.$store.state.token = user.token;
+        self.$store.state.user.userdata = user;
+        window.getApp.$emit('APP_LOGIN_SUCCESS');
+        params = '?' + params
+        let href = window.location.href.replace(params,'')
+        window.location.href = href
+      }
+
     }
-    else {
-      localStorage.startingNow =  JSON.stringify({
-        theme:false,
-        dark: false
-      });
-      this.$vuetify.theme.primary = JSON.parse(localStorage.theme).primary;
-      this.$vuetify.dark = JSON.parse(localStorage.theme).dark
-    }
+    
     
   },
   methods: {

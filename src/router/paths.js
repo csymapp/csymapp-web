@@ -77,6 +77,9 @@ export default [
     path: '/csystem',   // app:csystem
     // component: EmptyParentComponent,
     component: AppLayout,
+    redirect: {
+      path: '/csystem/home'
+    },
     children: [
       {
         name: 'csystemHome',
@@ -89,7 +92,7 @@ export default [
       },
       {
         name: 'auth',
-        path: 'auth/:action?',
+        path: 'auth/:action?/:callback?',
         component: () => import(
           /* webpackChunkName: "routes" */
           /* webpackMode: "lazy-once" */

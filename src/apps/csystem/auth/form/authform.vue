@@ -42,12 +42,12 @@
                       <span v-show="errors.has('registeremail')" class="danger">{{ errors.first('registeremail') }}</span>
                     </p>
                     <p class="control has-icon has-icon-right">
-                        <v-text-field  name="registerpassword" data-vv-as="Password" v-model="user.registerpassword" v-validate="'required|min:6'" :class="{'input': true, 'is-danger': errors.has('registerpassword') }" type="text" placeholder="Password" ref="registerpassword"></v-text-field>
+                        <v-text-field  name="registerpassword" data-vv-as="Password" v-model="user.registerpassword" v-validate="'required|min:6'" :class="{'input': true, 'is-danger': errors.has('registerpassword') }" type="password" placeholder="Password" ref="registerpassword"></v-text-field>
                         <i v-show="errors.has('registerpassword')" class="fa fa-warning"></i>
                         <span v-show="errors.has('registerpassword')" class="danger">{{ errors.first('registerpassword') }}</span>
                     </p>  
                     <p class="control has-icon has-icon-right">
-                        <v-text-field  name="Confirmpassword" data-vv-as="Confirm Password" v-model="user.confirmpassword" v-validate="'required|min:6|confirmed:registerpassword'" :class="{'input': true, 'is-danger': errors.has('Confirmpassword') }" type="text" placeholder="Confirm Password"></v-text-field>
+                        <v-text-field  name="Confirmpassword" data-vv-as="Confirm Password" v-model="user.confirmpassword" v-validate="'required|min:6|confirmed:registerpassword'" :class="{'input': true, 'is-danger': errors.has('Confirmpassword') }" type="password" placeholder="Confirm Password"></v-text-field>
                         <i v-show="errors.has('Confirmpassword')" class="fa fa-warning"></i>
                         <span v-show="errors.has('Confirmpassword')" class="danger">{{ errors.first('Confirmpassword') }}</span>
                     </p>    
@@ -110,7 +110,7 @@
                     <v-btn icon>
                       <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
                     </v-btn>
-                    <v-btn icon>
+                    <v-btn icon @click="githubLogin()">
                       <v-icon color="light-black">fa fa-github fa-lg</v-icon>
                     </v-btn>
 
@@ -131,7 +131,6 @@
 import config from '@/services/config'
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
-// import { ValidationProvider } from 'vee-validate';
 
 const dict = {
   custom: {
@@ -206,32 +205,43 @@ export default {
       }
       else { this.model = 'tab-1' }
     },
-    async login () {
-      // 
-      console.log('authService')
-      console.log(authService)
-      let [err, care] = await to(authService().emailLogin(this.user.email, this.user.password))
-      // alert('requires to log in...'+this.user.email+'...'+this.user.password)
-      // this.loading = true;
-      // setTimeout(() => {
-      //   this.$router.push('/dashboard');
-      // }, 1000);
+    async githubLogin() {
+      let self = this
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      let state = this.$store.state
+      let [err, care] = await to(authService().githubLogin(state))
     },
-    //   validateBeforeSubmit() {
-    //     let self = this
-    //   this.$validator.validateAll().then((result) => {
-    //     if (result) {
-    //       return;
-    //     }
-    //   });
-    // },
+
+    async login () {
+      let [err, care] = await to(authService().emailLogin(this.user.email, this.user.password))
+    },
+
     async validateRegister() {
       let self = this
       let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
       let promises = fields.map(self.validateField);
       let [err, care] = await to(Promise.all(promises));
       if(err) return;
-      alert('going to register~')
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
+      if(err)
+        try{
+          self.errors.add({
+            field: 'registerpassword',
+            msg: err.data.error
+          }); 
+          window.getApp.$emit('ERROR_EVT', err.data.error);
+          
+        }catch(error) {
+          self.errors.add({
+            field: 'registerpassword',
+            msg: 'unknown error. Please try again later'
+          }); 
+          window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
+        }
+      else {
+         window.getApp.$emit('APP_REGISTER_SUCCESS');
+      }
     },
     async validateLogin() {
       let self = this
@@ -241,8 +251,28 @@ export default {
       if(err) return;
 
       ;[err, care] = await to(authService().emailLogin({email:this.user.email, password:this.user.password}))
-      console.log(err)
-      console.log(care)
+      if(err)
+        try{
+          self.errors.add({
+            field: 'password',
+            msg: err.data.error
+          }); 
+          window.getApp.$emit('ERROR_EVT', err.data.error);
+          
+        }catch(error) {
+          self.errors.add({
+            field: 'password',
+            msg: 'unknown error. Please try again later'
+          }); 
+          window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
+        }
+      else {
+        self.$store.state.isLoggedIn = true;
+        let user = care.data
+        self.$store.state.token = user.token;
+        self.$store.state.user.userdata = user;
+         window.getApp.$emit('APP_LOGIN_SUCCESS');
+      }
     },
     validateField(field) {
       let self = this
@@ -260,6 +290,8 @@ export default {
   },
   mounted() {
     this.$validator.localize('en', dict);
+    console.log('loaded...')
+    console.log(urlParams.get('token')); // "edit"
   }
 
 };

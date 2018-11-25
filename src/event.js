@@ -2,18 +2,39 @@ export default [
   {
     name: 'APP_LOGIN_SUCCESS',
     callback: function (e) {
-      this.$router.push({ path: 'dashboard' });
+      this.snackbar = {
+        show: true,
+        color: 'green',
+        text: 'Logged in successfully.'
+      };
+      this.$router.push({ path: '/' });
+    }
+  },
+  {
+    name: 'APP_REGISTER_SUCCESS',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'green',
+        text: 'Account created successfully.'
+      };
+      this.$router.push({ path: '/' });
     }
   },
   {
     name: 'APP_LOGOUT',
     callback: function (e) {
+      
+      // this.$router.push('/');
+      // this.$store.state.token = null
+      // this.$store.state.isLoggedIn = false
+      // this.$store.state.user.userdata = {}
       this.snackbar = {
         show: true,
         color: 'green',
-        text: 'Logout successfully.'
+        text: 'Logged out successfully.'
       };
-      this.$router.replace({ path: '/login' });
+      this.$router.replace({ path: '/csystem/' });
     }
   },
   {
@@ -55,6 +76,17 @@ export default [
     // @error api response data
     callback: function (msg) {
       this.$message.success(msg);
+    }
+  },
+  {
+    name: 'ERROR_EVT',
+    // @error api response data
+    callback: function (msg) {
+      this.snackbar = {
+        show: true,
+        color: 'red',
+        text: msg
+      };
     }
   },
 

@@ -148,6 +148,7 @@ export default {
     themeColor: {
       handler (val) {
         if (val === false) {
+          console.log('first time setup...')
           try{
             this.theme = JSON.parse(localStorage.theme).primary 
           }catch(error) {

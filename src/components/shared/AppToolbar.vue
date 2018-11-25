@@ -97,7 +97,7 @@
                 </v-btn>
               </v-flex>
               <v-flex v-if="isLoggedIn()" class="text-xs-center" xs12 style="font-size: 0.8em;">
-                <v-btn block flat slot="activator" outline style="color: #666666; background-color: #f4f4f4; border-color: #ddd;">
+                <v-btn block flat slot="activator" outline style="color: #666666; background-color: #f4f4f4; border-color: #ddd;" @click="logout()">
                   <v-icon small left>fa-sign-out</v-icon>    Logout
                 </v-btn>
               </v-flex>
@@ -107,7 +107,6 @@
           </v-container>
 
         </v-list>
-
        
       </v-menu>
   </v-toolbar>
@@ -116,6 +115,8 @@
 import NotificationList from '@/components/widgets/list/NotificationList';
 import Util from '@/util';
 import config from '@/services/config'
+import authService from '@/apps/csystem/services/auth'
+
 export default {
   name: 'app-toolbar',
   components: {
@@ -145,6 +146,7 @@ export default {
         href: '#',
         title: 'Logout',
         click: (e) => {
+          
           window.getApp.$emit('APP_LOGOUT');
         }
       }
@@ -161,6 +163,12 @@ export default {
     }
   },
   methods: {
+    logout() {
+      this.$store.state.token = null
+      this.$store.state.isLoggedIn = false
+      this.$store.state.user.userdata = {}
+      window.getApp.$emit('APP_LOGOUT')
+    },
     handleDrawerToggle () {
       window.getApp.$emit('APP_DRAWER_TOGGLED');
     },
@@ -171,9 +179,9 @@ export default {
       return this.$store.state.user.profilepic || this.$store.state.user.defaultprofilepic;
     },
     getUser (elem) {
-      let ret = this.$store.state.user[elem];
-      if (elem === 'name') return ret || 'Guest';
-      if (elem === 'email') return ret || this.$store.state.user.defaultEmail; 
+      // let ret = this.$store.state.user[elem];
+      if (elem === 'name') return authService().getUserName(this.$store.state.user)
+      if (elem === 'email') return authService().getUserEmail(this.$store.state.user)
     },
     isLoggedIn () {
       return this.$store.state.isLoggedIn;
