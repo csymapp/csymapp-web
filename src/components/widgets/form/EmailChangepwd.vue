@@ -1,36 +1,30 @@
 <template>
   <v-card :color=color>
     <v-card-title :color=color>
-        <span class="headline">Email Profile</span>
+        <span class="headline">Change Password for email account</span>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text xs12>
         <v-form xs12>
                     <b-field 
-                        :type="{'is-danger': errors.has('registeremail')}"
-                        :message="errors.first('registeremail')" xs12>
+                        :type="{'is-danger': errors.has('changepassword')}"
+                        :message="errors.first('changepassword')">
                         
-                        <b-input v-model="user.registeremail" name="registeremail" v-validate="'required|email'"  placeholder="Email" xs12 lg12/>
-                    </b-field>
-                    <b-field 
-                        :type="{'is-danger': errors.has('registerpassword')}"
-                        :message="errors.first('registerpassword')">
-                        
-                        <b-input v-model="user.registerpassword" name="registerpassword" v-validate="'required|min:6'"  placeholder="Password" type="password" ref="registerpassword"/>
+                        <b-input v-model="user.changepassword" name="changepassword" v-validate="'required|min:6'"  placeholder="Password" type="password" ref="changepassword"/>
                     </b-field>
                     
                     <b-field 
-                        :type="{'is-danger': errors.has('Confirmpassword')}"
-                        :message="errors.first('Confirmpassword')">
+                        :type="{'is-danger': errors.has('Confirmchangepassword')}"
+                        :message="errors.first('Confirmchangepassword')">
                         
-                        <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6|confirmed:registerpassword'"  placeholder="Confirm Password" type="password"/>
+                        <b-input v-model="user.Confirmchangepassword" name="Confirmchangepassword" v-validate="'required|min:6|confirmed:changepassword'"  placeholder="Confirm Password" type="password"/>
                     </b-field>
                   </v-form>
     </v-card-text>
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="white" flat @click="$emit('close')">Close</v-btn>
-        <v-btn color="white" flat @click="validateRegister()">Add Account</v-btn>
+        <v-btn color="white" flat @click="validatechangePwd()">Change Password</v-btn>
     </v-card-actions>
     </v-card>  
 </template>
@@ -40,34 +34,25 @@
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
 
+
 const dict = {
   custom: {
-    email: {
-      required: 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
-    },
-    password: {
+    changepassword: {
       min: 'Please enter atleast 6 characters',
       required: () => 'Please enter your password'
     },
-    registeremail: {
-      required: () => 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
-    },
-    registerpassword: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    Confirmpassword: {
+    Confirmchangepassword: {
       required: () => 'Please enter your password again',
       min: 'Please enter atleast 6 characters',
       confirmed: 'Your passwords don\'t match'
     }
   }
 };
+
 export default {
   props: {
     color: String,
+    thisemail: Number
   },
    components: {
     // VWidget
@@ -75,12 +60,11 @@ export default {
   data () {
     return {
       basic: {
-        dialog: false
+        dialog1: false
       },
       user: {
-      registeremail: '',
-      registerpassword: '',
-      confirmpassword: ''
+      changepassword: '',
+      Confirmchangepassword: ''
     },
     };
   },
@@ -88,37 +72,39 @@ export default {
     this.$validator.localize('en', dict);
   },
   methods: {
-    async validateRegister() {
+    async validatechangePwd() {
+       
       let self = this
-      let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
+      let fields = [ 'changepassword', 'Confirmchangepassword'];
       let promises = fields.map(self.validateField);
       let [err, care] = await to(Promise.all(promises));
+      let emailid = this.thisemail
       if(err) return;
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
+      ;[err, care] = await to(authService().changepwd(self.$store.state, emailid, this.user.changepassword))
       if(err)
         try{
-          self.errors.add({
-            field: 'registerpassword',
-            msg: err.data.error
-          }); 
+        //   self.errors.add({
+        //     field: 'changepassword',
+        //     msg: err.data.error
+        //   }); 
           window.getApp.$emit('ERROR_EVT', err.data.error);
           
         }catch(error) {
-          self.errors.add({
-            field: 'registerpassword',
-            msg: 'unknown error. Please try again later'
-          }); 
+        //   self.errors.add({
+        //     field: 'changepassword',
+        //     msg: 'unknown error. Please try again later'
+        //   }); 
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
-         window.getApp.$emit('APP_EMAIL_ADD_SUCCESS');
-         ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
-         let user = care.data
-        let token = care.data.token
-         self.$store.state.token = token;
-        self.$store.state.user.userdata = user;
-         this.$router.push('/csystem/redirect')
+         window.getApp.$emit('CHANGE_PWD_SUCCESS');
+         self.$emit('close')
+        //  ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
+        //  let user = care.data
+        // let token = care.data.token
+        //  self.$store.state.token = token;
+        // self.$store.state.user.userdata = user;
+        //  this.$router.push('/csystem/redirect')
         //  self.$emit('close')
       }
     },

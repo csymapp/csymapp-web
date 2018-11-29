@@ -46,14 +46,14 @@
                         :type="{'is-danger': errors.has('registerpassword')}"
                         :message="errors.first('registerpassword')">
                         
-                        <b-input v-model="user.registerpassword" name="registerpassword" v-validate="'required|min:6'"  placeholder="Password" type="password"/>
+                        <b-input v-model="user.registerpassword" name="registerpassword" v-validate="'required|min:6'"  placeholder="Password" type="password" ref="password"/>
                     </b-field>
                     
                     <b-field 
                         :type="{'is-danger': errors.has('Confirmpassword')}"
                         :message="errors.first('Confirmpassword')">
                         
-                        <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6'"  placeholder="Confirm Password" type="password"/>
+                        <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6|confirmed:password'"  placeholder="Confirm Password" type="password"/>
                     </b-field>
                   </v-form>
 
@@ -142,14 +142,16 @@ import to from 'await-to-js';
 const dict = {
   custom: {
     email: {
-      required: 'Please enter your email address'
+      required: 'Please enter your email address',
+      email: () => 'Please enter a valid email address'
     },
     password: {
       min: 'Please enter atleast 6 characters',
       required: () => 'Please enter your password'
     },
     registeremail: {
-      required: () => 'Please enter your email address'
+      required: () => 'Please enter your email address',
+      email: () => 'Please enter a valid email address'
     },
     registerpassword: {
       min: 'Please enter atleast 6 characters',

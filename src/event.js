@@ -54,6 +54,18 @@ export default [
   },
 
   {
+    name: 'CHANGE_PWD_SUCCESS',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'success',
+        text: `Password has been changed`
+      };
+      // this.$router.push({ path: '/csystem/redirect' });
+    }
+  },
+
+  {
     name: 'APP_LOGOUT',
     callback: function (e) {
       

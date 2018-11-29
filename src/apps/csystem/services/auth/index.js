@@ -252,6 +252,36 @@ class auth{
   }
 
   
+  async changepwd(state, emailid, password) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/emailprofile/' + emailid
+        let params = {
+          "Password": password,
+          "Cpassword": password
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
+
+  
   async deleteEmail(state, emailid) {
     let self = this,
       token = self.getToken(state),

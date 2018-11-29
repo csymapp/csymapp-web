@@ -24,7 +24,7 @@
             </v-tooltip>
           </div>
           <div class="sm6 xs6 flex text-sm-center py-3 white--text" :class="color" style="cursor:grab">
-            <div class="headline">{{ title }} {{ subTitle }}</div>
+            <div >{{ title }} {{ subTitle }}</div>
             <span class="caption" underline @click="goto(togoto)" style="cursor:pointer;"> <v-icon dark left small>arrow_forward</v-icon></span>
           </div>
         </div>

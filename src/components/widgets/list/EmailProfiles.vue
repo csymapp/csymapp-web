@@ -1,6 +1,9 @@
 <template>
   <div>
   <v-card>
+    <v-dialog v-model="basic.dialog1" persistent max-width="500px" style="display:none;">
+                  <ChangePwd @close="basic.dialog1 = false" color="primary" :thisemail="thisemail"></ChangePwd>
+              </v-dialog>
     <v-card-title>
     <v-toolbar card dense color="transparent">
       <v-toolbar-title><h4>Email Profiles</h4></v-toolbar-title>
@@ -58,9 +61,12 @@
               <v-btn flat :class=whichColour(props.item.IsActive) @click="inactivateEmail(props.item, props.item.IsActive)">
                 {{ whichText(props.item.IsActive)}}
               </v-btn>
-              <v-btn flat icon color="primary" >
-                <v-icon>edit</v-icon>
+             
+
+               <v-btn flat icon color="primary" @click="basic.dialog1=true; thisemail=props.item.emailuid">
+                <v-icon >edit</v-icon>
               </v-btn>
+
               <v-btn flat icon color="red"  @click="dropEmail(props.item)">
                 <v-icon>delete</v-icon>
               </v-btn>
@@ -85,12 +91,14 @@
 <script>
 import { Projects } from '@/api/project';
 import EmaAddition from '@/components/widgets/form/EmailAddition';
+import ChangePwd from '@/components/widgets/form/EmailChangepwd';
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
 
 export default {
     components: {
-    EmaAddition
+    EmaAddition,
+    ChangePwd
   },
   data () {
     return {
@@ -117,8 +125,10 @@ export default {
 
       ],
       basic: {
-        dialog: false
+        dialog: false,
+        dialog1: false
       },
+      thisemail:null,
       profiles: {},
       defaultprofilepic:''
     };
@@ -192,6 +202,9 @@ export default {
             window.getApp.$emit('PROFILE_REMOVED', 'Email');
           }
         }else window.getApp.$emit('APP_NO_CHANGES');
+        
+      },
+      async changePwd(email) {
         
       }
   },
