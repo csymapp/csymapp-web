@@ -19,8 +19,8 @@
       <v-list dense expand>
         <template v-for="(item, i) in menus">
             <!--group with subitems-->
-            <v-list-group v-if="item.items" :key="item.name" :group="item.group" :prepend-icon="item.icon" no-action="no-action">
-              <v-list-tile slot="activator" ripple="ripple">
+            <v-list-group v-if="item.items" :key="item.name" :group="item.group" :prepend-icon="item.icon" no-action="no-action" >  
+              <v-list-tile slot="activator" ripple="ripple" >
                 <v-list-tile-content>
                   <v-list-tile-title>{{ item.title }}</v-list-tile-title>
                 </v-list-tile-content>
@@ -46,7 +46,7 @@
                   </v-list-tile-content>
                   <!-- <v-circle class="white--text pa-0 circle-pill" v-if="subItem.badge" color="red" disabled="disabled">{{ subItem.badge }}</v-circle> -->
                   <v-list-tile-action v-if="subItem.action">
-                    <v-icon :class="[subItem.actionClass || 'success--text']">{{ subItem.action }}</v-icon>
+                    <v-icon :class="[subItem.actionClass || 'danger--text']">{{  subItem.action }}</v-icon>
                   </v-list-tile-action>
                 </v-list-tile>
               </template>
@@ -63,7 +63,7 @@
               </v-list-tile-content>
               <!-- <v-circle class="white--text pa-0 chip--x-small" v-if="item.badge" :color="item.color || 'primary'" disabled="disabled">{{ item.badge }}</v-circle> -->
               <v-list-tile-action v-if="item.subAction">
-                <v-icon class="success--text">{{ item.subAction }}</v-icon>
+                <v-icon :class="[subItem.actionClass || 'danger--text']">{{ item.subAction }}</v-icon>
               </v-list-tile-action>
               <!-- <v-circle class="caption blue lighten-2 white--text mx-0" v-else-if="item.chip" label="label" small="small">{{ item.chip }}</v-circle> -->
             </v-list-tile>

@@ -1,11 +1,43 @@
 const Menu =  [
-  { header: 'Apps' },
+  { header: 'Csystem' },
   {
-    title: 'Dashboard',
+    title: 'Apps',
+    group: 'Apps',
+    component: 'csystem',
+    icon: 'widgets',
+    items: [
+      { name: 'home', title: 'Csystem', component: 'csystemHome' },
+      { name: 'apps', title: 'Csystem', component: 'csystemApps' ,
+          
+      },
+      // { name: 'statistic', title: 'Statistic', badge: 'new', component: 'components/statistic' },
+      // { name: 'chart', title: 'Chart', component: 'components/chart' },
+      // { name: 'list', title: 'List', component: 'components/widget-list' },
+      // { name: 'post', title: 'Post', component: 'components/widget-post' },
+    ]
+  },  
+  
+  {
+    title: 'Families',
+    group: 'Families',
+    component: 'csystem',
+    icon: 'widgets',
+    items: [
+      { name: 'profile', title: 'Social', component: 'components/social' },
+      // { name: 'statistic', title: 'Statistic', badge: 'new', component: 'components/statistic' },
+      // { name: 'chart', title: 'Chart', component: 'components/chart' },
+      // { name: 'list', title: 'List', component: 'components/widget-list' },
+      // { name: 'post', title: 'Post', component: 'components/widget-post' },
+    ]
+  },  
+
+  {
+    title: 'Profiles',
     group: 'apps',
-    icon: 'dashboard',
+    icon: 'email',
     name: 'Dashboard',
   },
+
   {
     title: 'Chat',
     group: 'apps',
@@ -26,19 +58,6 @@ const Menu =  [
     name: 'Media',
     icon: 'perm_media',
   },
-  {
-    title: 'Widgets',
-    group: 'widgets',
-    component: 'widgets',
-    icon: 'widgets',
-    items: [
-      { name: 'social', title: 'Social', component: 'components/social' },
-      { name: 'statistic', title: 'Statistic', badge: 'new', component: 'components/statistic' },
-      { name: 'chart', title: 'Chart', component: 'components/chart' },
-      { name: 'list', title: 'List', component: 'components/widget-list' },
-      // { name: 'post', title: 'Post', component: 'components/widget-post' },
-    ]
-  },  
   { header: 'UI Elements' },
   {
     title: 'General',
@@ -117,11 +136,32 @@ const Menu =  [
     group: 'extra',
     icon: 'list',
     items: [
-      { name: 'Login', title: 'Login', component: 'Login' },
+      { name: 'Login', title: 'Login', component: 'Login' ,actionClass: "text-danger"},
       { name: '404', title: '404', component: 'NotFound' },
       { name: '403', title: '403', component: 'AccessDenied' },
       { name: '500', title: '500', component: 'ServerError' },
     ]
+  },
+  { header: 'Account' },
+  {
+    title: 'Login',
+    group: 'pickers',
+    component: 'picker',
+    icon: 'fa-sign-in'
+  },
+  {
+    title: 'Logout',
+    group: 'pickers',
+    component: 'picker',
+    icon: 'fa-sign-out'
+  },
+  {
+    title: 'Logout',
+    group: 'pickers',
+    component: 'picker',
+    icon: 'fa-user-plus',
+    actionClass: "text-danger",
+    class: "danger"
   },
 ];
 // reorder menu

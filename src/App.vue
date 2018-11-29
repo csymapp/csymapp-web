@@ -63,6 +63,7 @@ export default {
     
   },
   async mounted () {
+    // console.log('mount')
     let urlParams = new URLSearchParams(window.location.search);
     let self = this,
       params = urlParams.toString(),
@@ -72,12 +73,15 @@ export default {
       if(err)
         window.getApp.$emit('ERROR_EVT',  err.data.error);
       else {
+        
         self.$store.state.isLoggedIn = true;
         let user = care.data
-        self.$store.state.token = user.token;
+        let token = care.data.token
+        self.$store.state.token = token;
         self.$store.state.user.userdata = user;
         window.getApp.$emit('APP_LOGIN_SUCCESS');
         params = '?' + params
+        this.$router.push('/csystem/redirect')
         let href = window.location.href.replace(params,'')
         window.location.href = href
       }

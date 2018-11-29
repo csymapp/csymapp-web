@@ -14,16 +14,25 @@ import store from '@/services/config/store';
 import { sync } from 'vuex-router-sync';
 sync(store, router); // sync the store and router
 
+import Buefy from 'buefy'
+// import 'buefy/dist/buefy.css'
+
+Vue.use(Buefy)
+
 Vue.use(VeeValidate);
+
+import VueDraggable from 'vue-draggable'
+ 
+Vue.use(VueDraggable)
+
+import VuetifyConfirm from 'vuetify-confirm'
+Vue.use(VuetifyConfirm)
 
 
 Vue.config.productionTip = false;
-// Helpers
-// Global filters
-console.log('storing..')
-console.log(store)
+
 Vue.filter('truncate', Truncate);
-Vue.use(VeeValidate, { fieldsBagName: 'formFields' });
+Vue.use(VeeValidate, { fieldsBagName: 'formFields', events: 'blur', events: ''});
 Vue.use(Vuetify, {
   // theme: {
   //   primary: colors.indigo.base, // #E53935

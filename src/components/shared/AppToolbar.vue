@@ -59,7 +59,7 @@
           <!-- {{ getUser('name') }} -->
         </v-btn>
 
-        <v-list class="pa-0" align-center justify-center>
+        <v-list class="pa-0" align-center justify-center xs12>
 
           <!-- <v-container fill-height style="background: #3c8dbc;"> -->
           <v-container fill-height class="primary">
@@ -92,7 +92,7 @@
                 </v-btn>
               </v-flex>
               <v-flex v-if="isLoggedIn()" class="text-xs-center" xs12 style="font-size: 0.8em;">
-                <v-btn block flat slot="activator" outline style="color: #666666; background-color: #f4f4f4; border-color: #ddd;">
+                <v-btn block flat slot="activator" outline style="color: #666666; background-color: #f4f4f4; border-color: #ddd;" to="/csystem/profile">
                   <v-icon small left>fa-user</v-icon>    Profile
                 </v-btn>
               </v-flex>
@@ -164,9 +164,10 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.state.token = null
-      this.$store.state.isLoggedIn = false
-      this.$store.state.user.userdata = {}
+      // this.$store.state.token = null
+      // this.$store.state.isLoggedIn = false
+      // this.$store.state.user.userdata = {}
+      // this.$store.state.user.profilepic = null
       window.getApp.$emit('APP_LOGOUT')
     },
     handleDrawerToggle () {
@@ -175,8 +176,13 @@ export default {
     handleFullScreen () {
       Util.toggleFullScreen();
     },
-    getProfilePic () {
-      return this.$store.state.user.profilepic || this.$store.state.user.defaultprofilepic;
+    getProfilePic () { 
+      if(this.$store.state.user.profilepic)
+        if(this.$store.state.user.profilepic !== this.$store.state.user.defaultprofilepic)
+          return this.$store.state.user.profilepic
+      let profilePic = authService().getProfilePic(this.$store.state.user)
+      this.$store.state.user.profilepic = profilePic
+      return this.$store.state.user.profilepic;
     },
     getUser (elem) {
       // let ret = this.$store.state.user[elem];

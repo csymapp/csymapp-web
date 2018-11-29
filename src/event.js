@@ -22,19 +22,62 @@ export default [
     }
   },
   {
+    name: 'APP_EMAIL_ADD_SUCCESS',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'green',
+        text: 'Account added successfully.'
+      };
+    }
+  },
+  {
+    name: 'APP_NO_CHANGES',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'primary',
+        text: 'No changes have been made'
+      };
+    }
+  },
+  {
+    name: 'PROFILE_REMOVED',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'black',
+        text: `${e} profile has been deleted`
+      };
+      this.$router.push({ path: '/csystem/redirect' });
+    }
+  },
+
+  {
     name: 'APP_LOGOUT',
     callback: function (e) {
       
-      // this.$router.push('/');
-      // this.$store.state.token = null
-      // this.$store.state.isLoggedIn = false
-      // this.$store.state.user.userdata = {}
+      this.$store.state.token = null
+      this.$store.state.isLoggedIn = false
+      this.$store.state.user.userdata = {}
+      this.$store.state.user.profilepic = null
       this.snackbar = {
         show: true,
         color: 'green',
         text: 'Logged out successfully.'
       };
-      this.$router.replace({ path: '/csystem/' });
+      this.$router.replace({ path: '/csystem/redirect' });
+    }
+  },
+  {
+    name: 'APP_PROFILE_MODIFY_SUCCESS',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'green',
+        text: 'Profile modified successfully.'
+      };
+      this.$router.push({ path: '/csystem/redirect' });
     }
   },
   {

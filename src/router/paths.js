@@ -74,6 +74,7 @@ export default [
   },
   {
     name: 'Csystem',
+    meta: { breadcrumb: true },
     path: '/csystem',   // app:csystem
     // component: EmptyParentComponent,
     component: AppLayout,
@@ -83,6 +84,7 @@ export default [
     children: [
       {
         name: 'csystemHome',
+        meta: { breadcrumb: true },
         path: 'home',
         component: () => import(
           /* webpackChunkName: "routes" */
@@ -92,6 +94,7 @@ export default [
       },
       {
         name: 'auth',
+        meta: { breadcrumb: true },
         path: 'auth/:action?/:callback?',
         component: () => import(
           /* webpackChunkName: "routes" */
@@ -106,6 +109,38 @@ export default [
           /* webpackChunkName: "routes" */
           /* webpackMode: "lazy-once" */
           `@/apps/csystem/construction`
+        )
+      },
+      {
+        name: 'csystemApps',
+        meta: { breadcrumb: true },
+        path: 'apps',
+        component: () => import(
+          `@/apps/csystem/apps`
+        )
+      },
+      {
+        name: 'csystemProfile',
+        meta: { breadcrumb: true },
+        path: 'profile',
+        component: () => import(
+          `@/apps/csystem/profile`
+        )
+      },
+      {
+        name: 'csystemProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/email',
+        component: () => import(
+          `@/apps/csystem/profile/emailprofile`
+        )
+      },
+      {
+        name: 'csystemRedirect',
+        meta: { breadcrumb: true },
+        path: 'redirect',
+        component: () => import(
+          `@/apps/csystem/redirect`
         )
       }
     ]
@@ -610,7 +645,7 @@ export default [
     )
   },
   {
-    path: '/widgets/social',
+    path: '/widgets/sociald',
     meta: { breadcrumb: true },
     name: 'components/social',
     component: () => import(

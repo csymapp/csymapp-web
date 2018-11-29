@@ -20,3 +20,5 @@ todo
 *.njsproj
 *.sln
 *.code-workspace
+
+*.bac

@@ -73,7 +73,8 @@ class auth{
           return reject(error.response || {data:{error:error.message}});
         });
       });
-    else 
+    else {
+      // console.log('having token....')
     return new Promise(function(resolve, reject) {
       let apiRoot = config.get('/apiRoot');
       let url = apiRoot + 'csymapp/user/' + uid
@@ -94,6 +95,37 @@ class auth{
         return reject(error.response || {data:{error:error.message}});
       });
     });
+    }
+    
+  }
+
+  async fetchUser(options) {
+    let self = this,
+      state = options.state,
+      token = self.getToken(state),
+      uid = options.uid
+      if(token === null) return {};
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/user/' + uid
+        let params = {
+          "email": options.email,
+          "password":options.password,
+          "cpassword":options.cpassword
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.get(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+
     
   }
 
@@ -145,6 +177,109 @@ class auth{
     return care;
   }
 
+  findValuesHelper(obj, key, list) {
+    let self = this
+    if (!obj) return list;
+    if (obj instanceof Array) {
+      for (var i in obj) {
+          list = list.concat(self.findValuesHelper(obj[i], key, []));
+      }
+      return list;
+    }
+    if (obj[key]) list.push(obj[key]);
+  
+    if ((typeof obj == "object") && (obj !== null) ){
+      var children = Object.keys(obj);
+      if (children.length > 0){
+        for (i = 0; i < children.length; i++ ){
+            list = list.concat(self.findValuesHelper(obj[children[i]], key, []));
+        }
+      }
+    }
+    return list;
+  }
+
+  async inactivateEmail(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/emailprofile/' + emailid
+        let params = {
+          "IsActive": false
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  async activateEmail(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/emailprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  
+  async deleteEmail(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/emailprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.delete(url,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
+
   getUserName(user) {
     let tuser = user.userdata;
     return tuser.Name || 'Guest'
@@ -154,6 +289,16 @@ class auth{
   getToken(state) {
     if(state.isLoggedIn === false) return null;
     return state.token
+  }
+
+  getProfilePic(user) {
+    let self = this
+    let profilePics = [];
+    profilePics = self.findValuesHelper(user.userdata, 'ProfilePic', profilePics)
+    if(!profilePics.length)
+      profilePics.push(user.defaultprofilepic)
+      console.log(profilePics)
+    return profilePics[Math.floor(Math.random()*profilePics.length)];
   }
 }
 

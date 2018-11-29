@@ -1,46 +1,16 @@
 <template>
-  <v-app id="login" class="primary" z-index="100">
-    <v-content  z-index="100">
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
-          <v-flex xs12 sm8 md5 lg4>
-            <v-card class="elevation-1 pa-1">
-              <v-card-text>
-
-                <v-tabs
-                  slot="extension"
-                  v-model="model"
-                  centered
-                  slider-color="black"
-                  grow
-                >
-                  <v-tab :key="1" href="#tab-1">New Account</v-tab>
-                  <v-tab :key="2" href="#tab-2">Login</v-tab>
-              </v-tabs>
-              <v-spacer></v-spacer>
-              <div class="layout column align-center has-text-centered">
-                  <!-- <h2>{{defaultAppName.toUpperCase()}}</h2> -->
-                  <h2>{{defaultAppName}}</h2>
-                  <v-icon v-if="model==='tab-2'" right>fa-lock</v-icon>
-                  <v-icon v-if="model==='tab-1'" right>fa-user-plus</v-icon>
-              </div>   
-              <!-- <p v-if="errors.email.length || errors.password.length  || errors.cpassword.length">
-                <b>Please correct the following error(s):</b>
-                <ul>
-                  <li v-for="error in errors.email">{{ error }}</li>
-                  <li v-for="error in errors.password">{{ error }}</li>
-                  <li v-for="error in errors.cpassword">{{ error }}</li>
-                </ul>
-              </p> -->
-              <v-tabs-items v-model="model">
-                <v-tab-item :id="`tab-1`" :key="1" >
-                  
-                  <v-form>
+  <v-card :color=color>
+    <v-card-title :color=color>
+        <span class="headline">Email Profile</span>
+    </v-card-title>
+    <v-divider></v-divider>
+    <v-card-text xs12>
+        <v-form xs12>
                     <b-field 
                         :type="{'is-danger': errors.has('registeremail')}"
-                        :message="errors.first('registeremail')">
+                        :message="errors.first('registeremail')" xs12>
                         
-                        <b-input v-model="user.registeremail" name="registeremail" v-validate="'required|email'"  placeholder="Email" />
+                        <b-input v-model="user.registeremail" name="registeremail" v-validate="'required|email'"  placeholder="Email" xs12 lg12/>
                     </b-field>
                     <b-field 
                         :type="{'is-danger': errors.has('registerpassword')}"
@@ -56,173 +26,39 @@
                         <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6'"  placeholder="Confirm Password" type="password"/>
                     </b-field>
                   </v-form>
-
-                  <v-card-actions>
-                    <v-btn block to="/">
-                      <v-icon color="light-blue" left>fa fa-home</v-icon>Home
-                    </v-btn>
-                    <v-btn block @click="validateRegister()">
-                      <v-icon color="light-blue" left>fa fa-user-plus</v-icon>Register
-                    </v-btn>
-
-                  </v-card-actions>
-                  <v-card-actions>
-                     <v-btn icon>
-                      <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="red">fa fa-google fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="light-black">fa fa-github fa-lg</v-icon>
-                    </v-btn>
-
-                  </v-card-actions>
-                </v-tab-item>
-                <v-tab-item :id="`tab-2`" :key="2" >
-                <v-form>
-
-                  <b-field 
-                      :type="{'is-danger': errors.has('email')}"
-                      :message="errors.first('email')">
-                      
-                      <b-input v-model="user.email" name="email" v-validate="'required|email'"  placeholder="Email" />
-                  </b-field>
-
-                  <b-field
-                      :type="{'is-danger': errors.has('password')}"
-                      :message="errors.first('password')">
-                      <b-input v-model="user.password" name="password" v-validate="'required|min:6'" placeholder="Password" type="password"/>
-                  </b-field>
-                </v-form>
-                <v-card-actions>
-                  <v-btn block to="/">
-                    <v-icon color="light-blue" left>fa fa-home</v-icon>Home
-                  </v-btn>
-                  <v-btn block @click="validateLogin()">
-                    <v-icon color="light-blue" left>fa fa-sign-in</v-icon>Login
-                  </v-btn>
-
-                </v-card-actions>
-                  <v-card-actions>
-                     <v-btn icon>
-                      <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="red">fa fa-google fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="githubLogin()">
-                      <v-icon color="light-black">fa fa-github fa-lg</v-icon>
-                    </v-btn>
-
-                  </v-card-actions>
-
-                </v-tab-item>
-              </v-tabs-items>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-content>
-  </v-app>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="white" flat @click="$emit('close')">Close</v-btn>
+        <v-btn color="white" flat @click="validateRegister()">Add Account</v-btn>
+    </v-card-actions>
+    </v-card>  
 </template>
 
 <script>
-import config from '@/services/config'
+// import config from '@/services/config'
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
-
-const dict = {
-  custom: {
-    email: {
-      required: 'Please enter your email address'
-    },
-    password: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    registeremail: {
-      required: () => 'Please enter your email address'
-    },
-    registerpassword: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    Confirmpassword: {
-      required: () => 'Please enter your password again',
-      min: 'Please enter atleast 6 characters',
-      confirmed: 'Your passwords don\'t match'
-    }
-  }
-};
-
-
-
 export default {
-  name: 'authform',
-  components: {
-  //  ValidationProvider
+  props: {
+    color: String,
   },
-  data: () => ({
-    defaultAppName: config.get('/defaultAppName'),
-    loading: false,
-    path: 'login',
-    user: {
-      email: '',
+   components: {
+    // VWidget
+  },
+  data () {
+    return {
+      basic: {
+        dialog: false
+      },
+      user: {
       registeremail: '',
-      password: '',
       registerpassword: '',
       confirmpassword: ''
     },
-    model: 'tab-2',
-    id: 'login',
-    formSubmitted: false
-  }),
-  watch: {
-    $route (to, from){
-      let self = this
-      let path = to.fullPath;
-      this.changeTab(path)
-    },
-  },
-  created () {
-    let path = this.$route.path;
-    this.changeTab(path)
+    };
   },
   methods: {
-    changeTab(path) {
-      // go home if user logged in
-      if (this.$store.state.isLoggedIn === true) {
-        this.$router.push('/');
-      }
-      path = path.split('/');
-      this.path = path[path.length - 1];
-      if (this.path !== 'login' && this.path !== 'register') {
-        this.$router.push('/404');
-      }
-      if (this.path === 'login') {
-        this.model = 'tab-2';
-      }
-      else { this.model = 'tab-1' }
-    },
-    async githubLogin() {
-      let self = this
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      let state = this.$store.state
-      let [err, care] = await to(authService().githubLogin(state))
-    },
-
-    async login () {
-      let [err, care] = await to(authService().emailLogin(this.user.email, this.user.password))
-    },
-
     async validateRegister() {
       let self = this
       let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
@@ -247,38 +83,14 @@ export default {
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
-         window.getApp.$emit('APP_REGISTER_SUCCESS');
-      }
-    },
-    async validateLogin() {
-      let self = this
-      let fields = ['email', 'password'];
-      let promises = fields.map(self.validateField);
-      let [err, care] = await to(Promise.all(promises));
-      if(err) return;
-
-      ;[err, care] = await to(authService().emailLogin({email:this.user.email, password:this.user.password}))
-      if(err)
-        try{
-          self.errors.add({
-            field: 'password',
-            msg: err.data.error
-          }); 
-          window.getApp.$emit('ERROR_EVT', err.data.error);
-          
-        }catch(error) {
-          self.errors.add({
-            field: 'password',
-            msg: 'unknown error. Please try again later'
-          }); 
-          window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
-        }
-      else {
-        self.$store.state.isLoggedIn = true;
-        let user = care.data
-        self.$store.state.token = user.token;
+         window.getApp.$emit('APP_EMAIL_ADD_SUCCESS');
+         ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
+         let user = care.data
+        let token = care.data.token
+         self.$store.state.token = token;
         self.$store.state.user.userdata = user;
-         window.getApp.$emit('APP_LOGIN_SUCCESS');
+         this.$router.push('/csystem/redirect')
+        //  self.$emit('close')
       }
     },
     validateField(field) {
@@ -293,29 +105,9 @@ export default {
       })
 
     }
-    
-  },
-  mounted() {
-    this.$validator.localize('en', dict);
-  },
-
-
+  }
 };
 </script>
-<style  scoped lang="css">
-  #login {
-    height: 50%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    content: "";
-    z-index: 0;
-  }
-
-
-
-</style>
 
 <style   lang="css">
   
@@ -574,5 +366,3 @@ html {
 
 
 </style>
-
-
