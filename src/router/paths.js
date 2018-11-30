@@ -136,6 +136,24 @@ export default [
         )
       },
       {
+        name: 'csystemGoogleProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/google',
+        component: () => import(
+          `@/apps/csystem/profile/googleprofile`
+        )
+      },
+      
+      {
+        name: 'csystemGithubProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/github',
+        component: () => import(
+          `@/apps/csystem/profile/githubprofile`
+        )
+      },
+
+      {
         name: 'csystemRedirect',
         meta: { breadcrumb: true },
         path: 'redirect',

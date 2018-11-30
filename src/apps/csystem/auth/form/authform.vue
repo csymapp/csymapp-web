@@ -112,7 +112,7 @@
                       <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
-                      <v-icon color="red">fa fa-google fa-lg</v-icon>
+                      <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
                       <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
@@ -220,6 +220,16 @@ export default {
       let state = this.$store.state
       let [err, care] = await to(authService().githubLogin(state))
     },
+
+    
+    async googleLogin() {
+      let self = this
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      let state = this.$store.state
+      let [err, care] = await to(authService().googleLogin(state))
+    },
+
+
 
     async login () {
       let [err, care] = await to(authService().emailLogin(this.user.email, this.user.password))

@@ -33,20 +33,47 @@ class auth{
     let self = this,
       token = state.token,
       uid = self.getUid(state.user.userdata)
-      if(token === null)
+      // if(token === null)
       return new Promise(function(resolve, reject) {
         let apiRoot = config.get('/apiRoot');
         let url = apiRoot + 'csymapp/auth/github'
 
         // redirect
         let href = window.location.href
-        url += '?redirect='+href
+        if(token !==null)
+          url += `?token=${token}&redirect=${href}`
+        else url += '?redirect='+href
+        
+        window.location = url
+       
+      });
+      // else 
+
+  }
+
+  
+  async googleLogin(state) {
+    let self = this,
+      token = state.token,
+      uid = self.getUid(state.user.userdata)
+      // if(token === null)
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/auth/google'
+
+        // redirect
+        let href = window.location.href
+        if(token !==null)
+          url += `?token=${token}&redirect=${href}`
+        else url += '?redirect='+href
         // console.log(url)
         window.location = url
        
       });
 
   }
+
+
 
   getUid(user) {
     return user.uid || 0;
@@ -225,6 +252,64 @@ class auth{
       });
   }
 
+  
+  async inactivateGoogle(state, guid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/googleprofile/' + guid
+        let params = {
+          "IsActive": false
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  
+  async inactivateGithub(state, guid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/githubprofile/' + guid
+        let params = {
+          "IsActive": false
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
+
+
+
   async activateEmail(state, emailid) {
     let self = this,
       token = self.getToken(state),
@@ -250,6 +335,62 @@ class auth{
         });
       });
   }
+  
+
+  async activateGoogle(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/googleprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  
+  async activateGithub(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/githubprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
 
   
   async changepwd(state, emailid, password) {
@@ -291,6 +432,58 @@ class auth{
       return new Promise(function(resolve, reject) {
         let apiRoot = config.get('/apiRoot');
         let url = apiRoot + 'csymapp/emailprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.delete(url,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  async deleteGoogle(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/googleprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.delete(url,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  async deleteGithub(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/githubprofile/' + emailid
         let params = {
           "IsActive": true
         }

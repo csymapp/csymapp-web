@@ -63,7 +63,6 @@ export default {
     
   },
   async mounted () {
-    // console.log('mount')
     let urlParams = new URLSearchParams(window.location.search);
     let self = this,
       params = urlParams.toString(),

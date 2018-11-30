@@ -17,6 +17,7 @@
                   </div>
                   <EmaAddition @close="basic.dialog = false" v-if="social==='an email'" :color=color></EmaAddition>
                   <GitAddition @close="basic.dialog = false" v-else-if="social==='a github'" :color=color ></GitAddition>
+                  <GoogleAddition @close="basic.dialog = false" v-else-if="social==='a google'" :color=color ></GoogleAddition>
                   <StillWorking @close="basic.dialog = false" v-else :color=color></StillWorking>
                 </v-dialog>
               </div>
@@ -37,6 +38,7 @@
 import VWidget from '@/components/VWidget';
 import EmaAddition from '@/components/widgets/form/EmailAddition';
 import GitAddition from '@/components/widgets/form/GithubAddition';
+import GoogleAddition from '@/components/widgets/form/GoogleAddition';
 import StillWorking from '@/components/widgets/form/stillWorking';
 export default {
   props: {
@@ -51,7 +53,8 @@ export default {
     VWidget,
     EmaAddition,
     StillWorking,
-    GitAddition
+    GitAddition,
+    GoogleAddition
   },
   data () {
     return {
