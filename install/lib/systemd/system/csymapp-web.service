@@ -1,0 +1,15 @@
+[Unit]
+Description=csymapp-web
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/var/www/html/csymapp-web
+ExecStart=/var/www/html/csymapp-web/start.sh
+SyslogIdentifier=csymapp-web
+Restart=on-failure
+RestartSec=5
+
+
+[Install]
+WantedBy=multi-user.target
