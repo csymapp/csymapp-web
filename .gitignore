@@ -22,3 +22,6 @@ todo
 *.code-workspace
 
 *.bac
+
+
+dist/
