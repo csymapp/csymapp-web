@@ -183,8 +183,8 @@ createService() {
 	cd install
 	cp -r lib/ /
 	systemctl daemon-reload
-	systemctl enable csymapp-api.service
-	systemctl start csymapp-api.service
+	systemctl enable csymapp-web.service
+	systemctl start csymapp-web.service
 	cd "$rootDir"
 }
 ################################################################################
