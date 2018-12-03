@@ -3,7 +3,7 @@
   <v-card>
     <v-card-title>
     <v-toolbar card dense color="transparent">
-      <v-toolbar-title><h4>Github Profiles</h4></v-toolbar-title>
+      <v-toolbar-title><h4>Twitter Profiles</h4></v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-tooltip bottom>
@@ -14,10 +14,10 @@
                         <v-icon>fa-plus</v-icon>
                     </v-btn>
                   </div>
-                  <EmaAddition @close="basic.dialog = false" color="black"></EmaAddition>
+                  <EmaAddition @close="basic.dialog = false" color="light-blue"></EmaAddition>
                 </v-dialog>
               </div>
-              <span>Add an email account</span>
+              <span>Add a Twitter account</span>
             </v-tooltip>
     </v-toolbar>
     </v-card-title>
@@ -55,10 +55,10 @@
               </td> -->
             <!-- <td class="text-xs-left"><v-progress-linear :value="props.item.progress" height="5" :color="props.item.color"></v-progress-linear> </td> -->
             <td class="text-xs-right">
-              <v-btn flat :class=whichColour(props.item.IsActive) @click="inactivateGithub(props.item, props.item.IsActive)">
+              <v-btn flat :class=whichColour(props.item.IsActive) @click="inactivateTwitter(props.item, props.item.IsActive)">
                 {{ whichText(props.item.IsActive)}}
               </v-btn>
-              <v-btn flat icon color="red"  @click="dropGithub(props.item)">
+              <v-btn flat icon color="red"  @click="dropTwitter(props.item)">
                 <v-icon>delete</v-icon>
               </v-btn>
             </td>
@@ -81,7 +81,7 @@
 
 <script>
 import { Projects } from '@/api/project';
-import EmaAddition from '@/components/widgets/form/GithubAddition';
+import EmaAddition from '@/components/widgets/form/TwitterAddition';
 import ChangePwd from '@/components/widgets/form/EmailChangepwd';
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
@@ -140,17 +140,17 @@ export default {
             return 'Active'
         return 'Inactive'
       },
-      async inactivateGithub(email, status) {
+      async inactivateTwitter(email, status) {
         let editedIndex = this.profiles.indexOf(email),
           editedItem = Object.assign({}, email),
           self = this,
           [err, care] = []
           email = editedItem.Email
-          let gituid = editedItem.gituid
+          let tuid = editedItem.tuid
           if(status === true)
-            [err, care] = await to(authService().inactivateGithub(self.$store.state, gituid))
+            [err, care] = await to(authService().inactivateTwitter(self.$store.state, tuid))
           else 
-            [err, care] = await to(authService().activateGithub(self.$store.state, gituid))
+            [err, care] = await to(authService().activateTwitter(self.$store.state, tuid))
 
         //   console.log(care)
           if(err)
@@ -168,7 +168,7 @@ export default {
           
       },
 
-      async dropGithub(email) {
+      async dropTwitter(email) {
         let res = await this.$confirm('Do you really want to delete?', {title: 'Delete?'})
         if (res) {
          let editedIndex = this.profiles.indexOf(email),
@@ -176,8 +176,8 @@ export default {
           self = this,
           [err, care] = []
           email = editedItem.Email
-          let gituid = editedItem.gituid
-          ;[err, care] = await to(authService().deleteGithub(self.$store.state, gituid))
+          let tuid = editedItem.tuid
+          ;[err, care] = await to(authService().deleteTwitter(self.$store.state, tuid))
           
           if(err)
             try{
@@ -190,7 +190,7 @@ export default {
             console.log(care)
             let user = care.data
             self.$store.state.user.userdata = user
-            window.getApp.$emit('PROFILE_REMOVED', 'Github');
+            window.getApp.$emit('PROFILE_REMOVED', 'Twitter');
           }
         }else window.getApp.$emit('APP_NO_CHANGES');
         
@@ -204,7 +204,7 @@ export default {
     //   ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
     let user = self.$store.state.user.userdata
     let defaultprofilepic = self.$store.state.user.defaultprofilepic
-    let emailProfiles = user.Githubs;
+    let emailProfiles = user.Twitters;
     self.profiles = emailProfiles
     for(let i in self.profiles) {
       self.profiles[i].status = self.profiles[i].IsActive === true? "enabled": "disabled"

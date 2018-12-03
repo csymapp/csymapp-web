@@ -190,7 +190,7 @@ export default {
             console.log(care)
             let user = care.data
             self.$store.state.user.userdata = user
-            window.getApp.$emit('PROFILE_REMOVED', 'Email');
+            window.getApp.$emit('PROFILE_REMOVED', 'Google');
           }
         }else window.getApp.$emit('APP_NO_CHANGES');
         

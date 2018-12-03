@@ -152,6 +152,26 @@ export default [
           `@/apps/csystem/profile/githubprofile`
         )
       },
+      {
+        name: 'csystemFacebookProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/facebook',
+        component: () => import(
+          `@/apps/csystem/profile/facebookprofile`
+        )
+      },
+
+      
+      {
+        name: 'csystemTwitterProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/twitter',
+        component: () => import(
+          `@/apps/csystem/profile/twitterprofile`
+        )
+      },
+
+
 
       {
         name: 'csystemRedirect',

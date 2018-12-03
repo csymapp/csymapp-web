@@ -109,13 +109,13 @@
                 </v-card-actions>
                   <v-card-actions>
                      <v-btn icon>
-                      <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
+                      <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
                       <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
-                      <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
+                      <v-icon color="light-blue" @click="twitterLogin()">fa fa-twitter fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon @click="githubLogin()">
                       <v-icon color="light-black">fa fa-github fa-lg</v-icon>
@@ -222,13 +222,29 @@ export default {
     },
 
     
+    async facebookLogin() {
+      let self = this
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      let state = this.$store.state
+      let [err, care] = await to(authService().facebookLogin(state))
+    },
+
+
+
+    
     async googleLogin() {
       let self = this
       let uid = authService().getUid(self.$store.state.user.userdata)
       let state = this.$store.state
       let [err, care] = await to(authService().googleLogin(state))
     },
-
+    
+    async twitterLogin() {
+      let self = this
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      let state = this.$store.state
+      let [err, care] = await to(authService().twitterLogin(state))
+    },
 
 
     async login () {

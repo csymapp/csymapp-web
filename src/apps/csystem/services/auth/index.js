@@ -73,6 +73,54 @@ class auth{
 
   }
 
+  
+  async facebookLogin(state) {
+    let self = this,
+      token = state.token,
+      uid = self.getUid(state.user.userdata)
+      // if(token === null)
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/auth/facebook'
+
+        // redirect
+        let href = window.location.href
+        if(token !==null)
+          url += `?token=${token}&redirect=${href}`
+        else url += '?redirect='+href
+        console.log(url)
+        window.location = url
+       
+      });
+
+  }
+
+  
+  async twitterLogin(state) {
+    let self = this,
+      token = state.token,
+      uid = self.getUid(state.user.userdata)
+      // if(token === null)
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/auth/twitter'
+
+        // redirect
+        let href = window.location.href
+        if(token !==null)
+          url += `?token=${token}&redirect=${href}`
+        else url += '?redirect='+href
+        console.log(url)
+        window.location = url
+       
+      });
+
+  }
+
+
+
+
+
 
 
   getUid(user) {
@@ -280,6 +328,64 @@ class auth{
   }
 
   
+  async inactivateFacebook(state, guid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/facebookprofile/' + guid
+        let params = {
+          "IsActive": false
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  
+  async inactivateTwitter(state, guid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/twitterprofile/' + guid
+        let params = {
+          "IsActive": false
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
+
+
+
+  
   async inactivateGithub(state, guid) {
     let self = this,
       token = self.getToken(state),
@@ -364,6 +470,35 @@ class auth{
   }
 
   
+  async activateFacebook(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/facebookprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
+
+  
   async activateGithub(state, emailid) {
     let self = this,
       token = self.getToken(state),
@@ -373,6 +508,32 @@ class auth{
       return new Promise(function(resolve, reject) {
         let apiRoot = config.get('/apiRoot');
         let url = apiRoot + 'csymapp/githubprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  async activateTwitter(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/twitterprofile/' + emailid
         let params = {
           "IsActive": true
         }
@@ -475,6 +636,61 @@ class auth{
       });
   }
 
+  
+  async deleteFacebook(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/facebookprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.delete(url,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  async deleteTwitter(state, emailid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/twitterprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.delete(url,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
+
   async deleteGithub(state, emailid) {
     let self = this,
       token = self.getToken(state),
@@ -518,6 +734,9 @@ class auth{
     let self = this
     let profilePics = [];
     profilePics = self.findValuesHelper(user.userdata, 'ProfilePic', profilePics)
+    let tmp = [];
+    for(let i in profilePics) if(profilePics[i] !== '')tmp.push(profilePics[i])
+    profilePics = tmp;
     if(!profilePics.length)
       profilePics.push(user.defaultprofilepic)
       console.log(profilePics)
