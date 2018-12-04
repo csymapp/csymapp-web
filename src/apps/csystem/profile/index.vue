@@ -50,6 +50,17 @@
         </v-flex>        
         <v-flex lg2 sm6 xs12>
           <profile-box
+            icon="fa fa-linkedin"
+            :title=String(user.Linkedins?user.Linkedins.length:String(0))
+            :sub-title=profileString(user.Linkedins)
+            color="#0077B5" 
+            social="a linkedin"  
+            togoto="/csystem/profile/linkedin"    
+          >
+          </profile-box>             
+        </v-flex>   
+        <!-- <v-flex lg2 sm6 xs12>
+          <profile-box
             icon="fa fa-instagram"
             :title=String(user.Instagrams?user.Instagrams.length:String(0))
             :sub-title=profileString(user.Instagrams)
@@ -58,7 +69,7 @@
             togoto="/csystem/profile/instagram"    
           >
           </profile-box>             
-        </v-flex>   
+        </v-flex>    -->
         <v-flex lg2 sm6 xs12>
           <profile-box
             icon="fa fa-github"
@@ -208,8 +219,8 @@ export default {
           value: user.Googles?user.Googles.length : 0 
         },
         {
-          name: 'Instagram',
-          value: user.Instagrams?user.Instagrams.length : 0 
+          name: 'Linkedin',
+          value: user.Linkedins?user.Linkedins.length : 0 
         },
         {
           name: 'Twitter',

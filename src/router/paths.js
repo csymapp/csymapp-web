@@ -153,6 +153,14 @@ export default [
         )
       },
       {
+        name: 'csystemLinkedinProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/linkedin',
+        component: () => import(
+          `@/apps/csystem/profile/linkedinprofile`
+        )
+      },
+      {
         name: 'csystemFacebookProfile',
         meta: { breadcrumb: true },
         path: 'profile/facebook',

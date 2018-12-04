@@ -67,20 +67,63 @@
 
                   </v-card-actions>
                   <v-card-actions>
-                     <v-btn icon>
-                      <v-icon color="blue">fa fa-facebook-square fa-lg</v-icon>
+                     <!-- <v-btn icon>
+                      <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
-                      <v-icon color="red">fa fa-google fa-lg</v-icon>
+                      <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
-                      <v-icon color="light-blue">fa fa-twitter fa-lg</v-icon>
+                      <v-icon color="light-blue" @click="twitterLogin()">fa fa-twitter fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
-                      <v-icon color="light-black">fa fa-github fa-lg</v-icon>
+                      <v-icon color="light-black"  @click="githubLogin()">fa fa-github fa-lg</v-icon>
                     </v-btn>
+                    <v-btn icon>
+                      <v-icon color="#0077b5" @click="linkedinLogin()">fa fa-linkedin fa-lg</v-icon>
+                    </v-btn> -->
 
+                  
+
+                    <SocialLinks></SocialLinks>
                   </v-card-actions>
+
+
+              <div grid-list-xl fluid row wrap class="row wrap">
+                
+                <!-- <v-flex lg1 sm1 xs2>
+                  <v-btn icon>
+                    <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
+                  </v-btn>  
+                </v-flex>
+                <v-flex lg2 sm2 xs2>
+                  <v-btn icon>
+                    <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
+                  </v-btn>  
+                </v-flex>
+                <v-flex lg2 sm6 xs12>
+                  <v-btn icon>
+                    <v-icon color="light-blue" @click="twitterLogin()">fa fa-twitter fa-lg</v-icon>
+                  </v-btn>  
+                </v-flex>
+                <v-flex lg2 sm6 xs12>
+                  <v-btn icon>
+                    <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
+                  </v-btn>  
+                </v-flex>
+                <v-flex lg2 sm6 xs12>
+                  <v-btn icon>
+                    <v-icon color="light-black"  @click="githubLogin()">fa fa-github fa-lg</v-icon>
+                  </v-btn> 
+                </v-flex>
+                <v-flex lg2 sm6 xs12> 
+                  <v-btn icon>
+                    <v-icon color="#0077b5" @click="linkedinLogin()">fa fa-linkedin fa-lg</v-icon>
+                  </v-btn>  
+                </v-flex> -->
+              </div>
+                          
+                
                 </v-tab-item>
                 <v-tab-item :id="`tab-2`" :key="2" >
                 <v-form>
@@ -108,7 +151,7 @@
 
                 </v-card-actions>
                   <v-card-actions>
-                     <v-btn icon>
+                     <!-- <v-btn icon>
                       <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
                     </v-btn>
                     <v-btn icon>
@@ -120,6 +163,10 @@
                     <v-btn icon @click="githubLogin()">
                       <v-icon color="light-black">fa fa-github fa-lg</v-icon>
                     </v-btn>
+                    <v-btn icon @click="linkedinLogin()">
+                      <v-icon color="#0077b5">fa fa-linkedin fa-lg</v-icon>
+                    </v-btn> -->
+                    <SocialLinks></SocialLinks>
 
                   </v-card-actions>
 
@@ -137,6 +184,7 @@
 <script>
 import config from '@/services/config'
 import authService from '@/apps/csystem/services/auth'
+import SocialLinks from '@/components/widgets/form/SocialLinks'
 import to from 'await-to-js';
 
 const dict = {
@@ -170,7 +218,7 @@ const dict = {
 export default {
   name: 'authform',
   components: {
-  //  ValidationProvider
+    SocialLinks
   },
   data: () => ({
     defaultAppName: config.get('/defaultAppName'),
@@ -222,6 +270,16 @@ export default {
     },
 
     
+    async linkedinLogin() {
+      let self = this
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      let state = this.$store.state
+      let [err, care] = await to(authService().linkedinLogin(state))
+    },
+
+
+
+    
     async facebookLogin() {
       let self = this
       let uid = authService().getUid(self.$store.state.user.userdata)
@@ -261,17 +319,40 @@ export default {
       ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
       if(err)
         try{
+          let tmpErr =  err.data.error;
+          try{
+            tmpErr = JSON.parse(tmpErr)
+          }catch(error) {}
+          let field = 'registerpassword';
+          if(typeof tmpErr === 'object') {
+             
+            for (let i in tmpErr) {
+              err = tmpErr[i]
+              if(i === 'Email'){
+                field = 'registeremail'
+                err = tmpErr[i]
+              }
+              if(i === 'Password')
+                field = 'registerpassword'
+              
+              if(i === 'Cpassword')
+                field = 'Confirmpassword'
+            }
+              
+          }
+
           self.errors.add({
-            field: 'registerpassword',
-            msg: err.data.error
+            // field: 'registerpassword',
+            field,
+            msg: err
           }); 
-          window.getApp.$emit('ERROR_EVT', err.data.error);
+          window.getApp.$emit('ERROR_EVT',err);
           
         }catch(error) {
-          self.errors.add({
-            field: 'registerpassword',
-            msg: 'unknown error. Please try again later'
-          }); 
+          // self.errors.add({
+          //   field: 'registerpassword',
+          //   msg: 'unknown error. Please try again later'
+          // }); 
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
@@ -288,17 +369,37 @@ export default {
       ;[err, care] = await to(authService().emailLogin({email:this.user.email, password:this.user.password}))
       if(err)
         try{
+          let tmpErr =  err.data.error;
+          try{
+            tmpErr = JSON.parse(tmpErr)
+          }catch(error) {}
+
+          let field = 'password';
+          if(typeof tmpErr === 'object') {
+             
+            for (let i in tmpErr) {
+              err = tmpErr[i]
+              if(i === 'Email'){
+                field = 'email'
+                err = tmpErr[i]
+              }
+              if(i === 'Password')
+                field = 'password'
+            }
+              
+          }
           self.errors.add({
-            field: 'password',
-            msg: err.data.error
+            field,
+            msg: err
           }); 
-          window.getApp.$emit('ERROR_EVT', err.data.error);
+          window.getApp.$emit('ERROR_EVT', err);
           
         }catch(error) {
-          self.errors.add({
-            field: 'password',
-            msg: 'unknown error. Please try again later'
-          }); 
+          // console.log(error)
+          // self.errors.add({
+          //   field: 'password',
+          //   msg: 'unknown error. Please try again later'
+          // }); 
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
@@ -456,6 +557,9 @@ input, textarea, select, button {
 input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
 }
+input.is-danger {
+    border-color:#ff3860;
+}
 .control {
     clear: both;
     font-size: 1rem;
@@ -591,6 +695,7 @@ html {
 
 .help.is-danger {
     color: #ff3860;
+    margin-left: 3rem;
 }
 .help {
     display: block;

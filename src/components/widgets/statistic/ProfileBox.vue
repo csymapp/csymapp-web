@@ -11,7 +11,7 @@
                   <div class="layout column ma-0 justify-center align-center" slot="activator">
                     <v-badge left :color="color" >
                         <span slot="badge"  style="cursor:pointer">+</span>
-                        <v-icon size="56px" :color="color" style="cursor:pointer">{{icon}}</v-icon>
+                        <v-icon size="56px" :color="color" :background-color="color" style="cursor:pointer">{{icon}}</v-icon>
                     </v-badge>
                     
                   </div>
@@ -20,14 +20,15 @@
                   <GoogleAddition @close="basic.dialog = false" v-else-if="social==='a google'" :color=color ></GoogleAddition>
                   <FacebookAddition @close="basic.dialog = false" v-else-if="social==='a facebook'" :color=color ></FacebookAddition>
                   <TwitterAddition @close="basic.dialog = false" v-else-if="social==='a twitter'" :color=color ></TwitterAddition>
+                  <LinkedinAddition @close="basic.dialog = false" v-else-if="social==='a linkedin'" :color=color ></LinkedinAddition>
                   <StillWorking @close="basic.dialog = false" v-else :color=color></StillWorking>
                 </v-dialog>
               </div>
               <span>Add {{ social }} account</span>
             </v-tooltip>
           </div>
-          <div class="sm6 xs6 flex text-sm-center py-3 white--text" :class="color" style="cursor:grab">
-            <div >{{ title }} {{ subTitle }}</div>
+          <div class="sm6 xs6 flex text-sm-center py-3 white--text" :class="color" :style="{ backgroundColor: color}" style="cursor:grab">
+            <div >{{ title }} {{ subTitle }}</div> 
             <span class="caption" underline @click="goto(togoto)" style="cursor:pointer;"> <v-icon dark left small>arrow_forward</v-icon></span>
           </div>
         </div>
@@ -43,6 +44,7 @@ import GitAddition from '@/components/widgets/form/GithubAddition';
 import GoogleAddition from '@/components/widgets/form/GoogleAddition';
 import FacebookAddition from '@/components/widgets/form/FacebookAddition';
 import TwitterAddition from '@/components/widgets/form/TwitterAddition';
+import LinkedinAddition from '@/components/widgets/form/LinkedinAddition';
 import StillWorking from '@/components/widgets/form/stillWorking';
 export default {
   props: {
@@ -60,7 +62,8 @@ export default {
     GitAddition,
     GoogleAddition,
     FacebookAddition,
-    TwitterAddition
+    TwitterAddition,
+    LinkedinAddition
   },
   data () {
     return {

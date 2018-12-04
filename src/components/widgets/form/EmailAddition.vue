@@ -98,11 +98,34 @@ export default {
       ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
       if(err)
         try{
+            let tmpErr =  err.data.error;
+              try{
+                tmpErr = JSON.parse(tmpErr)
+              }catch(error) {}
+
+              let field = 'password';
+              if(typeof tmpErr === 'object') {
+                
+                for (let i in tmpErr) {
+                  err = tmpErr[i]
+                  if(i === 'Email'){
+                    field = 'registeremail'
+                    err = tmpErr[i]
+                  }
+                  if(i === 'Password')
+                    field = 'registerpassword'
+                    
+                  if(i === 'Cpassword')
+                    field = 'Confirmpassword'
+
+                }
+                  
+              }
           self.errors.add({
-            field: 'registerpassword',
-            msg: err.data.error
+            field,
+            msg: err
           }); 
-          window.getApp.$emit('ERROR_EVT', err.data.error);
+          window.getApp.$emit('ERROR_EVT', err);
           
         }catch(error) {
           self.errors.add({
@@ -245,6 +268,9 @@ input, textarea, select, button {
     margin: 0em;
     font: 400 13.3333px Arial;
 }
+input.is-danger {
+    border-color:#ff3860;
+}
 /* user agent stylesheet */
 input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
@@ -384,6 +410,7 @@ html {
 
 .help.is-danger {
     color: #ff3860;
+    margin-left: 3rem;
 }
 .help {
     display: block;

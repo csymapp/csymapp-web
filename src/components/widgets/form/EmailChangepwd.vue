@@ -83,11 +83,30 @@ export default {
       ;[err, care] = await to(authService().changepwd(self.$store.state, emailid, this.user.changepassword))
       if(err)
         try{
-        //   self.errors.add({
-        //     field: 'changepassword',
-        //     msg: err.data.error
-        //   }); 
-          window.getApp.$emit('ERROR_EVT', err.data.error);
+            let tmpErr =  err.data.error;
+              try{
+                tmpErr = JSON.parse(tmpErr)
+              }catch(error) {}
+
+              let field = 'password';
+              if(typeof tmpErr === 'object') {
+                
+                for (let i in tmpErr) {
+                  err = tmpErr[i]
+                  if(i === 'Password')
+                    field = 'changepassword'
+                    
+                  if(i === 'Cpassword')
+                    field = 'Confirmchangepassword'
+
+                }
+                  
+              }
+            self.errors.add({
+                field,
+                msg: err
+            }); 
+          window.getApp.$emit('ERROR_EVT', err);
           
         }catch(error) {
         //   self.errors.add({
@@ -235,6 +254,9 @@ input, textarea, select, button {
 input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
 }
+input.is-danger {
+    border-color:#ff3860;
+}
 .control {
     clear: both;
     font-size: 1rem;
@@ -370,6 +392,7 @@ html {
 
 .help.is-danger {
     color: #ff3860;
+    margin-left: 3rem;
 }
 .help {
     display: block;

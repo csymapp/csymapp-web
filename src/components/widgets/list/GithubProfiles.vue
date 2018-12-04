@@ -17,7 +17,7 @@
                   <EmaAddition @close="basic.dialog = false" color="black"></EmaAddition>
                 </v-dialog>
               </div>
-              <span>Add an email account</span>
+              <span>Add a github account</span>
             </v-tooltip>
     </v-toolbar>
     </v-card-title>
