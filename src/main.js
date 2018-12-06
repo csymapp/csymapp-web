@@ -17,6 +17,10 @@ sync(store, router); // sync the store and router
 import Buefy from 'buefy'
 // import 'buefy/dist/buefy.css'
 
+import VueSpinners from 'vue-spinners'
+ 
+Vue.use(VueSpinners)
+
 Vue.use(Buefy)
 
 Vue.use(VeeValidate);
@@ -27,6 +31,11 @@ Vue.use(VueDraggable)
 
 import VuetifyConfirm from 'vuetify-confirm'
 Vue.use(VuetifyConfirm)
+
+import VueTelInput from 'vue-tel-input'
+import 'vue-tel-input/dist/vue-tel-input.css';
+ 
+Vue.use(VueTelInput)
 
 
 Vue.config.productionTip = false;

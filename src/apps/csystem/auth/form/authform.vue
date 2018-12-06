@@ -14,13 +14,17 @@
                   slider-color="black"
                   grow
                 >
-                  <v-tab :key="1" href="#tab-1">New Account</v-tab>
+                  <v-tab :key="1" href="#tab-1">New Email</v-tab>
                   <v-tab :key="2" href="#tab-2">Login</v-tab>
+                  <v-tab :key="4" href="#tab-4">New Phone</v-tab>
+                  <v-tab :key="3" href="#tab-3">Phone</v-tab>
               </v-tabs>
               <v-spacer></v-spacer>
               <div class="layout column align-center has-text-centered">
                   <!-- <h2>{{defaultAppName.toUpperCase()}}</h2> -->
                   <h2>{{defaultAppName}}</h2>
+                  <v-icon v-if="model==='tab-4'" right>fa-phone</v-icon>
+                  <v-icon v-if="model==='tab-3'" right>fa-phone</v-icon>
                   <v-icon v-if="model==='tab-2'" right>fa-lock</v-icon>
                   <v-icon v-if="model==='tab-1'" right>fa-user-plus</v-icon>
               </div>   
@@ -67,61 +71,8 @@
 
                   </v-card-actions>
                   <v-card-actions>
-                     <!-- <v-btn icon>
-                      <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="light-blue" @click="twitterLogin()">fa fa-twitter fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="light-black"  @click="githubLogin()">fa fa-github fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="#0077b5" @click="linkedinLogin()">fa fa-linkedin fa-lg</v-icon>
-                    </v-btn> -->
-
-                  
-
                     <SocialLinks></SocialLinks>
                   </v-card-actions>
-
-
-              <div grid-list-xl fluid row wrap class="row wrap">
-                
-                <!-- <v-flex lg1 sm1 xs2>
-                  <v-btn icon>
-                    <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
-                  </v-btn>  
-                </v-flex>
-                <v-flex lg2 sm2 xs2>
-                  <v-btn icon>
-                    <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
-                  </v-btn>  
-                </v-flex>
-                <v-flex lg2 sm6 xs12>
-                  <v-btn icon>
-                    <v-icon color="light-blue" @click="twitterLogin()">fa fa-twitter fa-lg</v-icon>
-                  </v-btn>  
-                </v-flex>
-                <v-flex lg2 sm6 xs12>
-                  <v-btn icon>
-                    <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
-                  </v-btn>  
-                </v-flex>
-                <v-flex lg2 sm6 xs12>
-                  <v-btn icon>
-                    <v-icon color="light-black"  @click="githubLogin()">fa fa-github fa-lg</v-icon>
-                  </v-btn> 
-                </v-flex>
-                <v-flex lg2 sm6 xs12> 
-                  <v-btn icon>
-                    <v-icon color="#0077b5" @click="linkedinLogin()">fa fa-linkedin fa-lg</v-icon>
-                  </v-btn>  
-                </v-flex> -->
-              </div>
                           
                 
                 </v-tab-item>
@@ -151,21 +102,88 @@
 
                 </v-card-actions>
                   <v-card-actions>
-                     <!-- <v-btn icon>
-                      <v-icon color="blue" @click="facebookLogin()">fa fa-facebook-square fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="red" @click="googleLogin()">fa fa-google fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="light-blue" @click="twitterLogin()">fa fa-twitter fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="githubLogin()">
-                      <v-icon color="light-black">fa fa-github fa-lg</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="linkedinLogin()">
-                      <v-icon color="#0077b5">fa fa-linkedin fa-lg</v-icon>
-                    </v-btn> -->
+                    <SocialLinks></SocialLinks>
+
+                  </v-card-actions>
+
+                </v-tab-item>
+                <v-tab-item :id="`tab-3`" :key="3" >
+                <v-form>
+                  <div v-if="receivedCode" class="text-xs-center" color="red">{{user.phone}} <v-icon color="light-blue" right small style="cursor:pointer;" @click="receivedCode=false">fa fa-remove</v-icon></div>
+                  <b-field v-if="!receivedCode"
+                      :type="{'is-danger': errors.has('phone')}"
+                      :message="errors.first('phone')">
+                      <vue-tel-input v-model="user.phone" name="phone" v-validate="'required'"  placeholder="Phone Number"
+                    @onInput="onInput" 
+                    :preferredCountries="['ke']">
+                  </vue-tel-input>
+                  </b-field>
+                  <b-field v-if="receivedCode"
+                      :type="{'is-danger': errors.has('code')}"
+                      :message="errors.first('code')">
+                      
+                      <b-input v-model="user.telephoneCode" name="code" v-validate="'required|length:6'"  placeholder="Code" />
+                  </b-field>
+                  <b-field v-if="receivedCode"
+                      :type="{'is-danger': errors.has('pin')}"
+                      :message="errors.first('pin')">
+                      
+                      <b-input v-model="user.pin" name="pin" v-validate="'required|length:4'"  placeholder="Pin" type="password"/>
+                  </b-field>
+
+                </v-form>
+                <v-card-actions>
+                  <v-btn block to="/">
+                    <v-icon color="light-blue" left>fa fa-home</v-icon>Home
+                  </v-btn>
+                  <v-btn v-if="!receivedCode" block @click="validatePhoneLogin()">
+                    <v-icon color="light-blue" left>fa fa-sign-in</v-icon>Send Code
+                  </v-btn>
+                  <v-btn v-else block @click="validatetelePhoneCode()">
+                    <v-icon color="light-blue" left>fa fa-phone</v-icon>Login
+                  </v-btn>
+
+                </v-card-actions>
+                  <v-card-actions>
+                    <SocialLinks></SocialLinks>
+
+                  </v-card-actions>
+
+                </v-tab-item>
+                <v-tab-item :id="`tab-4`" :key="4" >
+                <v-form>
+                  <b-field 
+                      :type="{'is-danger': errors.has('registerphone')}"
+                      :message="errors.first('registerphone')">
+                      <vue-tel-input v-model="user.registerphone" name="registerphone" v-validate="'required'"  placeholder="Phone Number"
+                    @onInput="onInput" 
+                    :preferredCountries="['ke']">
+                  </vue-tel-input>
+                  </b-field>
+                  <b-field 
+                      :type="{'is-danger': errors.has('registerpin')}"
+                      :message="errors.first('registerpin')">
+                      
+                      <b-input v-model="user.registerpin" name="registerpin" v-validate="'required|length:4'"  placeholder="Pin" type="password" ref="pin"/>
+                  </b-field>
+                  <b-field 
+                      :type="{'is-danger': errors.has('Confirmpin')}"
+                      :message="errors.first('Confirmpin')">
+                      
+                      <b-input v-model="user.Confirmpin" name="Confirmpin" v-validate="'required|length:4|confirmed:pin'"  placeholder="Confirm pin" type="password"/>
+                  </b-field>
+
+                </v-form>
+                <v-card-actions>
+                  <v-btn block to="/">
+                    <v-icon color="light-blue" left>fa fa-home</v-icon>Home
+                  </v-btn>
+                  <v-btn block @click="validatePhoneRegister()">
+                    <v-icon color="light-blue" left>fa fa-phone</v-icon>Register
+                  </v-btn>
+
+                </v-card-actions>
+                  <v-card-actions>
                     <SocialLinks></SocialLinks>
 
                   </v-card-actions>
@@ -193,6 +211,21 @@ const dict = {
       required: 'Please enter your email address',
       email: () => 'Please enter a valid email address'
     },
+    
+    phone: {
+      required: 'Please enter your phone number'
+    },
+    
+    code: {
+      required: 'Please enter the code you received',
+      length: 'Code should be 6 characters'
+    },
+    pin: {
+      required: 'Please enter your pin',
+      length: 'Pin should be 4 characters'
+    },
+
+
     password: {
       min: 'Please enter atleast 6 characters',
       required: () => 'Please enter your password'
@@ -209,6 +242,18 @@ const dict = {
       required: () => 'Please enter your password again',
       min: 'Please enter atleast 6 characters',
       confirmed: 'Your passwords don\'t match'
+    },
+    registerphone: {
+      required: () => 'Please enter your phone number',
+    },
+    registerpin: {
+      required: 'Please enter your pin',
+      length: 'Pin should be 4 characters'
+    },
+    Confirmpin: {
+      required: 'Please confirm your pin',
+      length: 'Pin should be 4 characters',
+      confirmed: 'Your pins don\'t match'
     }
   }
 };
@@ -222,14 +267,24 @@ export default {
   },
   data: () => ({
     defaultAppName: config.get('/defaultAppName'),
+    receivedCode: false,
+    // PhoneHidden: true,
     loading: false,
+    validPhoneNumber: false,
     path: 'login',
     user: {
       email: '',
       registeremail: '',
       password: '',
       registerpassword: '',
-      confirmpassword: ''
+      confirmpassword: '',
+      phone: '',
+      telephoneCode: '',
+      pin: '',
+      registerphone:'',
+      registerpin:'',
+      Confirmpin:'',
+
     },
     model: 'tab-2',
     id: 'login',
@@ -247,6 +302,10 @@ export default {
     this.changeTab(path)
   },
   methods: {
+     onInput({ number, isValid, country }) {
+       this.validPhoneNumber = isValid
+      //  console.log(number, isValid, country);
+     },
     changeTab(path) {
       // go home if user logged in
       if (this.$store.state.isLoggedIn === true) {
@@ -254,61 +313,84 @@ export default {
       }
       path = path.split('/');
       this.path = path[path.length - 1];
-      if (this.path !== 'login' && this.path !== 'register') {
+      if (this.path !== 'login' && this.path !== 'register' && this.path !== 'phonelogin' && this.path !== 'phoneregister') {
         this.$router.push('/404');
       }
       if (this.path === 'login') {
         this.model = 'tab-2';
       }
-      else { this.model = 'tab-1' }
+      else if(this.path === 'register')
+          this.model = 'tab-1' 
+      else if(this.path === 'phonelogin')
+          this.model = 'tab-3' 
+      else if(this.path === 'phoneregister')
+          this.model = 'tab-4' 
+       
     },
-    async githubLogin() {
-      let self = this
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      let state = this.$store.state
-      let [err, care] = await to(authService().githubLogin(state))
-    },
-
-    
-    async linkedinLogin() {
-      let self = this
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      let state = this.$store.state
-      let [err, care] = await to(authService().linkedinLogin(state))
-    },
-
-
-
-    
-    async facebookLogin() {
-      let self = this
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      let state = this.$store.state
-      let [err, care] = await to(authService().facebookLogin(state))
-    },
-
-
-
-    
-    async googleLogin() {
-      let self = this
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      let state = this.$store.state
-      let [err, care] = await to(authService().googleLogin(state))
-    },
-    
-    async twitterLogin() {
-      let self = this
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      let state = this.$store.state
-      let [err, care] = await to(authService().twitterLogin(state))
-    },
-
-
     async login () {
       let [err, care] = await to(authService().emailLogin(this.user.email, this.user.password))
     },
 
+    async validatePhoneRegister() {
+      let self = this
+      if(!self.validPhoneNumber)
+      {
+         self.errors.add({
+            field: "registerphone",
+            msg: 'Please enter a valid phone number'
+          }); 
+          return;
+      }
+      
+      let fields = ['registerphone', 'registerpin', 'Confirmpin'];
+      let promises = fields.map(self.validateField);
+      let [err, care] = await to(Promise.all(promises));
+      if(err) return;
+      let uid = authService().getUid(self.$store.state.user.userdata)
+      ;[err, care] = await to(authService().phoneRegister({phone:this.user.registerphone, pin:this.user.registerpin, cpin:this.user.Confirmpin, state:this.$store.state, uid}))
+     if(err)
+        try{
+          let tmpErr =  err.data.error;
+          try{
+            tmpErr = JSON.parse(tmpErr)
+          }catch(error) {}
+          let field = 'registerpin';
+          if(typeof tmpErr === 'object') {
+             
+            for (let i in tmpErr) {
+              err = tmpErr[i]
+              if(i === 'Phone'){
+                field = 'registerphone'
+                err = tmpErr[i]
+              }
+              if(i === 'Pin')
+                field = 'registerpin'
+              
+              if(i === 'Cpin')
+                field = 'Confirmpin'
+            }
+              
+          }
+
+          self.errors.add({
+            // field: 'registerpassword',
+            field,
+            msg: err
+          }); 
+          window.getApp.$emit('ERROR_EVT',err);
+          
+        }catch(error) {
+          // self.errors.add({
+          //   field: 'registerpassword',
+          //   msg: 'unknown error. Please try again later'
+          // }); 
+          window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
+        }
+      else {
+         window.getApp.$emit('APP_REGISTER_SUCCESS');
+      }
+    },
+    
     async validateRegister() {
       let self = this
       let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
@@ -359,6 +441,106 @@ export default {
          window.getApp.$emit('APP_REGISTER_SUCCESS');
       }
     },
+
+
+    async validatePhoneLogin() {
+      let self = this
+      if(!self.validPhoneNumber)
+      {
+         self.errors.add({
+            field: "phone",
+            msg: 'Please enter a valid phone number'
+          }); 
+          return;
+      }
+     let [err, care] = await to(authService().getTelephoneCode(self.user.phone))
+      if(err)
+        try{
+          let tmpErr =  err.data.error;
+          try{
+            tmpErr = JSON.parse(tmpErr)
+          }catch(error) {}
+          let field = 'phone';
+          if(typeof tmpErr === 'object') {
+            for (let i in tmpErr) {
+              err = tmpErr[i]
+              if(i === 'Phone'){
+                field = 'phone'
+              }
+            }
+          } else {
+            err = tmpErr
+            field = ''
+          }
+            self.errors.add({
+              field,
+              msg: err
+            }); 
+            window.getApp.$emit('ERROR_EVT',err);
+          
+          
+        }catch(error) {
+          window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
+        }
+      else {
+        self.receivedCode = true;
+      }
+
+
+    },
+
+    async validatetelePhoneCode() {
+      let self = this
+      let fields = ['code', 'pin'];
+      let promises = fields.map(self.validateField);
+      let [err, care] = await to(Promise.all(promises));
+      if(err) return;
+      ;[err, care] = await to(authService().telephoneLogin({phone:this.user.phone, code:this.user.telephoneCode, pin:this.user.pin}))
+      let field = 'phone';
+       if(err) {
+        try{
+          let tmpErr =  err.data.error;
+          try{
+            tmpErr = JSON.parse(tmpErr)
+          }catch(error) {}
+          
+          if(typeof tmpErr === 'object') {
+            for (let i in tmpErr) {
+              err = tmpErr[i]
+              if(i === 'Phone'){
+                field = 'phone'
+                self.receivedCode = false;
+              }
+              if(i === 'Code'){
+                field = 'code'
+              }
+              if(i === 'Pin'){
+                field = 'pin'
+              }
+            }
+          } else {
+            err = tmpErr
+            field = ''
+          }
+            self.errors.add({
+              field,
+              msg: err
+            }); 
+            window.getApp.$emit('ERROR_EVT',err);
+          
+          
+        }catch(error) {
+          window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
+        }
+      }else {
+        self.$store.state.isLoggedIn = true;
+        let user = care.data
+        self.$store.state.token = user.token;
+        self.$store.state.user.userdata = user;
+         window.getApp.$emit('APP_LOGIN_SUCCESS');
+      }
+    },
+
     async validateLogin() {
       let self = this
       let fields = ['email', 'password'];
@@ -403,6 +585,8 @@ export default {
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
+
+        // 
         self.$store.state.isLoggedIn = true;
         let user = care.data
         self.$store.state.token = user.token;

@@ -1,36 +1,38 @@
 <template>
   <v-card :color=color>
     <v-card-title :color=color>
-        <span class="headline"><v-icon left>fa-envelope</v-icon> Email Profile</span>
+        <span class="headline"><v-icon left>fa-phone</v-icon> Telephone Profile</span>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text xs12>
         <v-form xs12>
                     <b-field 
-                        :type="{'is-danger': errors.has('registeremail')}"
-                        :message="errors.first('registeremail')" xs12>
-                        
-                        <b-input v-model="user.registeremail" name="registeremail" v-validate="'required|email'"  placeholder="Email" xs12 lg12/>
-                    </b-field>
-                    <b-field 
-                        :type="{'is-danger': errors.has('registerpassword')}"
-                        :message="errors.first('registerpassword')">
-                        
-                        <b-input v-model="user.registerpassword" name="registerpassword" v-validate="'required|min:6'"  placeholder="Password" type="password" ref="registerpassword"/>
-                    </b-field>
-                    
-                    <b-field 
-                        :type="{'is-danger': errors.has('Confirmpassword')}"
-                        :message="errors.first('Confirmpassword')">
-                        
-                        <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6|confirmed:registerpassword'"  placeholder="Confirm Password" type="password"/>
-                    </b-field>
+                      :type="{'is-danger': errors.has('registerphone')}"
+                      :message="errors.first('registerphone')">
+                      <vue-tel-input v-model="user.registerphone" name="registerphone" v-validate="'required'"  placeholder="Phone Number"
+                    @onInput="onInput" 
+                    :preferredCountries="['ke']">
+                  </vue-tel-input>
+                  </b-field>
+                  <b-field 
+                      :type="{'is-danger': errors.has('registerpin')}"
+                      :message="errors.first('registerpin')">
+                      
+                      <b-input v-model="user.registerpin" name="registerpin" v-validate="'required|length:4'"  placeholder="Pin" type="password" ref="pin"/>
+                  </b-field>
+                  <b-field 
+                      :type="{'is-danger': errors.has('Confirmpin')}"
+                      :message="errors.first('Confirmpin')">
+                      
+                      <b-input v-model="user.Confirmpin" name="Confirmpin" v-validate="'required|length:4|confirmed:pin'"  placeholder="Confirm pin" type="password"/>
+                  </b-field>
+
                   </v-form>
     </v-card-text>
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="white" flat @click="$emit('close')">Close</v-btn>
-        <v-btn color="white" flat @click="validateRegister()">Add Profile</v-btn>
+        <v-btn color="white" flat @click="validatePhoneRegister()">Add Profile</v-btn>
     </v-card-actions>
     </v-card>  
 </template>
@@ -42,26 +44,17 @@ import to from 'await-to-js';
 
 const dict = {
   custom: {
-    email: {
-      required: 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
+     registerphone: {
+      required: () => 'Please enter your phone number',
     },
-    password: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
+    registerpin: {
+      required: 'Please enter your pin',
+      length: 'Pin should be 4 characters'
     },
-    registeremail: {
-      required: () => 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
-    },
-    registerpassword: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    Confirmpassword: {
-      required: () => 'Please enter your password again',
-      min: 'Please enter atleast 6 characters',
-      confirmed: 'Your passwords don\'t match'
+    Confirmpin: {
+      required: 'Please confirm your pin',
+      length: 'Pin should be 4 characters',
+      confirmed: 'Your pins don\'t match'
     }
   }
 };
@@ -77,10 +70,19 @@ export default {
       basic: {
         dialog: false
       },
+      validPhoneNumber: false,
       user: {
-      registeremail: '',
-      registerpassword: '',
-      confirmpassword: ''
+        email: '',
+        registeremail: '',
+        password: '',
+        registerpassword: '',
+        confirmpassword: '',
+        phone: '',
+        telephoneCode: '',
+        pin: '',
+        registerphone:'',
+        registerpin:'',
+        Confirmpin:'',
     },
     };
   },
@@ -88,62 +90,66 @@ export default {
     this.$validator.localize('en', dict);
   },
   methods: {
-    async validateRegister() {
+      onInput({ number, isValid, country }) {
+       this.validPhoneNumber = isValid
+      //  console.log(number, isValid, country);
+     },
+    async validatePhoneRegister() {
       let self = this
-      let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
+      if(!self.validPhoneNumber)
+      {
+         self.errors.add({
+            field: "registerphone",
+            msg: 'Please enter a valid phone number'
+          }); 
+          return;
+      }
+      let fields = ['registerphone', 'registerpin', 'Confirmpin'];
       let promises = fields.map(self.validateField);
       let [err, care] = await to(Promise.all(promises));
       if(err) return;
       let uid = authService().getUid(self.$store.state.user.userdata)
-      ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
-      if(err)
+      ;[err, care] = await to(authService().phoneRegister({phone:this.user.registerphone, pin:this.user.registerpin, cpin:this.user.Confirmpin, state:this.$store.state, uid}))
+     if(err)
         try{
-            let tmpErr =  err.data.error;
-              try{
-                tmpErr = JSON.parse(tmpErr)
-              }catch(error) {}
-
-              let field = 'password';
-              if(typeof tmpErr === 'object') {
-                
-                for (let i in tmpErr) {
-                  err = tmpErr[i]
-                  if(i === 'Email'){
-                    field = 'registeremail'
-                    err = tmpErr[i]
-                  }
-                  if(i === 'Password')
-                    field = 'registerpassword'
-                    
-                  if(i === 'Cpassword')
-                    field = 'Confirmpassword'
-
-                }
-                  
+          let tmpErr =  err.data.error;
+          try{
+            tmpErr = JSON.parse(tmpErr)
+          }catch(error) {}
+          let field = 'registerpin';
+          if(typeof tmpErr === 'object') {
+             
+            for (let i in tmpErr) {
+              err = tmpErr[i]
+              if(i === 'Phone'){
+                field = 'registerphone'
+                err = tmpErr[i]
               }
+              if(i === 'Pin')
+                field = 'registerpin'
+              
+              if(i === 'Cpin')
+                field = 'Confirmpin'
+            }
+              
+          }
+
           self.errors.add({
             field,
             msg: err
           }); 
-          window.getApp.$emit('ERROR_EVT', err);
+          window.getApp.$emit('ERROR_EVT',err);
           
         }catch(error) {
-          self.errors.add({
-            field: 'registerpassword',
-            msg: 'unknown error. Please try again later'
-          }); 
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
-         
          ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
          let user = care.data
         let token = care.data.token
          self.$store.state.token = token;
         self.$store.state.user.userdata = user;
-        window.getApp.$emit('APP_EMAIL_ADD_SUCCESS');
-        //  this.$router.push('/csystem/redirect')
-        //  self.$emit('close')
+         window.getApp.$emit('APP_ADD_ACCOUNT_SUCCESS');
       }
     },
     validateField(field) {

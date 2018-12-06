@@ -89,7 +89,7 @@
 <script>
 import AppDrawer from '@/components/shared/AppDrawer';
 import AppToolbar from '@/components/shared/AppToolbar';
-import fixedToolbar from './toolBars/fixedToolbar';
+// import fixedToolbar from './toolBars/fixedToolbar';
 import AppFab from '@/components/shared/AppFab';
 import PageHeader from '@/components/shared/PageHeader';
 import menu from '@/api/menu';
@@ -101,7 +101,7 @@ export default {
   components: {
     AppDrawer,
     AppToolbar,
-    fixedToolbar,
+    // fixedToolbar,
     AppFab,
     PageHeader,
     menu,

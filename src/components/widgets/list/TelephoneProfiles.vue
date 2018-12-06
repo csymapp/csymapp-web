@@ -1,9 +1,17 @@
 <template>
   <div>
   <v-card>
+    <v-dialog v-model="basic.dialog1" persistent max-width="500px" style="display:none;">
+      <ChangePwd @close="basic.dialog1 = false" color="primary" :thisphone="thisphone"></ChangePwd>
+    </v-dialog>
+    
+    <v-dialog v-model="basic.dialog2" persistent max-width="500px" style="display:none;">
+      <ActivatewithCode @close="basic.dialog2 = false" color="primary" :thisphone="thisphone"></ActivatewithCode>
+    </v-dialog>
+
     <v-card-title>
     <v-toolbar card dense color="transparent">
-      <v-toolbar-title><h4><v-icon left color="black">fa-github</v-icon> Github Profiles</h4></v-toolbar-title>
+      <v-toolbar-title><h4><v-icon left color="primary">fa-phone</v-icon>  Phone Profiles</h4></v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-tooltip bottom>
@@ -14,10 +22,10 @@
                         <v-icon>fa-plus</v-icon>
                     </v-btn>
                   </div>
-                  <EmaAddition @close="basic.dialog = false" color="black"></EmaAddition>
+                  <EmaAddition @close="basic.dialog = false" color="primary"></EmaAddition>
                 </v-dialog>
               </div>
-              <span>Add a github account</span>
+              <span>Add a telephone profile</span>
             </v-tooltip>
     </v-toolbar>
     </v-card-title>
@@ -48,17 +56,23 @@
                 <img :src="props.item.avatar || defaultprofilepic" />
               </v-avatar>
             </td> -->
-            <td>{{ props.item.Email }}</td>
+            <td>{{ props.item.Telephone }}</td>
             <!-- <td class="text-xs-left" ><v-btn flat :class=whichColour(props.item.IsActive)> 
               {{ whichStatus(props.item.IsActive)}}
               </v-btn>
               </td> -->
             <!-- <td class="text-xs-left"><v-progress-linear :value="props.item.progress" height="5" :color="props.item.color"></v-progress-linear> </td> -->
             <td class="text-xs-right">
-              <v-btn flat :class=whichColour(props.item.IsActive) @click="inactivateGithub(props.item, props.item.IsActive)">
+              <v-btn flat :class=whichColour(props.item.IsActive) @click="deactivateTelephone(props.item, props.item.IsActive); thisphone=props.item.puid">
                 {{ whichText(props.item.IsActive)}}
               </v-btn>
-              <v-btn flat icon color="red"  @click="dropGithub(props.item)">
+             
+
+               <v-btn flat icon color="primary" @click="basic.dialog1=true; thisphone=props.item.puid">
+                <v-icon >edit</v-icon>
+              </v-btn>
+
+              <v-btn flat icon color="red"  @click="dropTelephone(props.item)">
                 <v-icon>delete</v-icon>
               </v-btn>
             </td>
@@ -81,14 +95,16 @@
 
 <script>
 import { Projects } from '@/api/project';
-import EmaAddition from '@/components/widgets/form/GithubAddition';
-import ChangePwd from '@/components/widgets/form/EmailChangepwd';
+import EmaAddition from '@/components/widgets/form/TelephoneAddition';
+import ChangePwd from '@/components/widgets/form/TelephoneChangePin';
+import ActivatewithCode from '@/components/widgets/form/ActivatewithCode';
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
 
 export default {
     components: {
     EmaAddition,
+    ActivatewithCode,
     ChangePwd
   },
   data () {
@@ -107,9 +123,9 @@ export default {
         //   value: 'avatar'
         // },
         {
-          text: 'Email address',
+          text: 'Phone Number',
           align: 'left',
-          value: 'Email'
+          value: 'Telephone'
         },
         // { text: 'Status', value: 'status' },
         { text: 'Action', value: 'status', align: 'right' },
@@ -117,9 +133,10 @@ export default {
       ],
       basic: {
         dialog: false,
-        dialog1: false
+        dialog1: false,
+        dialog2: false
       },
-      thisemail:null,
+      thisphone:null,
       profiles: {},
       defaultprofilepic:''
     };
@@ -140,44 +157,46 @@ export default {
             return 'Active'
         return 'Inactive'
       },
-      async inactivateGithub(email, status) {
+
+      async deactivateTelephone(email, status) {
         let editedIndex = this.profiles.indexOf(email),
           editedItem = Object.assign({}, email),
           self = this,
           [err, care] = []
-          email = editedItem.Email
-          let gituid = editedItem.gituid
-          if(status === true)
-            [err, care] = await to(authService().inactivateGithub(self.$store.state, gituid))
-          else 
-            [err, care] = await to(authService().activateGithub(self.$store.state, gituid))
-
-        //   console.log(care)
-          if(err)
-            try{
-              window.getApp.$emit('ERROR_EVT', err.data.error);
-              
-            }catch(error) {
-              window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
-            }
-          else {
+          let phone = editedItem.Telephone
+          let puid = editedItem.puid
+          if(status === true) {
+            [err, care] = await to(authService().deactivateTelephone(self.$store.state, puid))
+            ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
             let user = care.data
-            self.$store.state.user.userdata = user
-            window.getApp.$emit('APP_PROFILE_MODIFY_SUCCESS');
+            let token = care.data.token
+            self.$store.state.token = token;
+            self.$store.state.user.userdata = user;
+            window.getApp.$emit('APP_SOME_SUCCESS', 'Profile has been deactivated');
+            self.$emit('close')
+
           }
-          
+          else {
+            ;[err, care] = await to(authService().getTelephoneCode(phone))
+            if(err)
+              window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
+            else {
+              self.basic.dialog2 = true;
+
+            }
+          }
       },
 
-      async dropGithub(email) {
+      async dropTelephone(email) {
         let res = await this.$confirm('Do you really want to delete?', {title: 'Delete?'})
         if (res) {
          let editedIndex = this.profiles.indexOf(email),
           editedItem = Object.assign({}, email),
           self = this,
           [err, care] = []
-          email = editedItem.Email
-          let gituid = editedItem.gituid
-          ;[err, care] = await to(authService().deleteGithub(self.$store.state, gituid))
+          email = editedItem.Telephone
+          let puid = editedItem.puid
+          ;[err, care] = await to(authService().deleteTelephone(self.$store.state, puid))
           
           if(err)
             try{
@@ -190,7 +209,7 @@ export default {
             console.log(care)
             let user = care.data
             self.$store.state.user.userdata = user
-            window.getApp.$emit('PROFILE_REMOVED', 'Github');
+            window.getApp.$emit('PROFILE_REMOVED', 'Telephone');
           }
         }else window.getApp.$emit('APP_NO_CHANGES');
         
@@ -204,7 +223,7 @@ export default {
     //   ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
     let user = self.$store.state.user.userdata
     let defaultprofilepic = self.$store.state.user.defaultprofilepic
-    let emailProfiles = user.Githubs;
+    let emailProfiles = user.Telephones;
     self.profiles = emailProfiles
     for(let i in self.profiles) {
       self.profiles[i].status = self.profiles[i].IsActive === true? "enabled": "disabled"

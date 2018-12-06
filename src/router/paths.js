@@ -74,7 +74,20 @@ export default [
   },
   {
     name: 'Csystem',
-    meta: { breadcrumb: true },
+    meta: {
+      breadcrumb: true,
+      title: 'csymapp home',
+      metaTags: [
+        {
+          name: 'description',
+          content: '...'
+        },
+        {
+          property: 'og:description',
+          content: '...'
+        }
+      ]
+    },
     path: '/csystem',   // app:csystem
     // component: EmptyParentComponent,
     component: AppLayout,
@@ -135,6 +148,16 @@ export default [
           `@/apps/csystem/profile/emailprofile`
         )
       },
+      
+      {
+        name: 'csystemProfile',
+        meta: { breadcrumb: true },
+        path: 'profile/telephone',
+        component: () => import(
+          `@/apps/csystem/profile/telephoneprofile`
+        )
+      },
+
       {
         name: 'csystemGoogleProfile',
         meta: { breadcrumb: true },

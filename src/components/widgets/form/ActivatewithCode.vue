@@ -1,38 +1,26 @@
 <template>
   <v-card :color=color>
     <v-card-title :color=color>
-        <span class="headline"><v-icon left>fa-envelope</v-icon> Email Profile</span>
+        <span class="headline">Enter the code you received</span>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text xs12>
         <v-form xs12>
                     <b-field 
-                        :type="{'is-danger': errors.has('registeremail')}"
-                        :message="errors.first('registeremail')" xs12>
+                        :type="{'is-danger': errors.has('activationCode')}"
+                        :message="errors.first('activationCode')">
                         
-                        <b-input v-model="user.registeremail" name="registeremail" v-validate="'required|email'"  placeholder="Email" xs12 lg12/>
-                    </b-field>
-                    <b-field 
-                        :type="{'is-danger': errors.has('registerpassword')}"
-                        :message="errors.first('registerpassword')">
-                        
-                        <b-input v-model="user.registerpassword" name="registerpassword" v-validate="'required|min:6'"  placeholder="Password" type="password" ref="registerpassword"/>
+                        <b-input v-model="user.activationCode" name="activationCode" v-validate="'required'"  placeholder="Activation Code"/>
                     </b-field>
                     
-                    <b-field 
-                        :type="{'is-danger': errors.has('Confirmpassword')}"
-                        :message="errors.first('Confirmpassword')">
-                        
-                        <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6|confirmed:registerpassword'"  placeholder="Confirm Password" type="password"/>
-                    </b-field>
                   </v-form>
     </v-card-text>
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="white" flat @click="$emit('close')">Close</v-btn>
-        <v-btn color="white" flat @click="validateRegister()">Add Profile</v-btn>
+        <v-btn color="white" flat @click="activationCodeI()">Activate</v-btn>
     </v-card-actions>
-    </v-card>  
+    </v-card>
 </template>
 
 <script>
@@ -40,34 +28,19 @@
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
 
+
 const dict = {
   custom: {
-    email: {
-      required: 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
-    },
-    password: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    registeremail: {
-      required: () => 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
-    },
-    registerpassword: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    Confirmpassword: {
-      required: () => 'Please enter your password again',
-      min: 'Please enter atleast 6 characters',
-      confirmed: 'Your passwords don\'t match'
+    activationCode: {
+      required: 'Please enter the code you received',
     }
   }
 };
+
 export default {
   props: {
     color: String,
+    thisphone: Number
   },
    components: {
     // VWidget
@@ -75,12 +48,11 @@ export default {
   data () {
     return {
       basic: {
-        dialog: false
+        dialog2: false
       },
       user: {
-      registeremail: '',
-      registerpassword: '',
-      confirmpassword: ''
+      activationCode: '',
+      ConfirmactivationCode: ''
     },
     };
   },
@@ -88,14 +60,17 @@ export default {
     this.$validator.localize('en', dict);
   },
   methods: {
-    async validateRegister() {
+    async activationCodeI() {
+       
       let self = this
-      let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
+      let fields = [ 'activationCode'];
       let promises = fields.map(self.validateField);
       let [err, care] = await to(Promise.all(promises));
+      let phoneid = this.thisphone
       if(err) return;
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
+
+      // 
+      ;[err, care] = await to(authService().activateTelephone(self.$store.state, phoneid, this.user.activationCode))
       if(err)
         try{
             let tmpErr =  err.data.error;
@@ -103,47 +78,41 @@ export default {
                 tmpErr = JSON.parse(tmpErr)
               }catch(error) {}
 
-              let field = 'password';
+              let field = 'activationCode';
               if(typeof tmpErr === 'object') {
                 
                 for (let i in tmpErr) {
                   err = tmpErr[i]
-                  if(i === 'Email'){
-                    field = 'registeremail'
-                    err = tmpErr[i]
-                  }
-                  if(i === 'Password')
-                    field = 'registerpassword'
+                  if(i === 'Code')
+                    field = 'activationCode'
                     
-                  if(i === 'Cpassword')
-                    field = 'Confirmpassword'
 
                 }
                   
+              } else {
+                  err = tmpErr
               }
-          self.errors.add({
-            field,
-            msg: err
-          }); 
+            self.errors.add({
+                field,
+                msg: err
+            }); 
           window.getApp.$emit('ERROR_EVT', err);
           
         }catch(error) {
-          self.errors.add({
-            field: 'registerpassword',
-            msg: 'unknown error. Please try again later'
-          }); 
+        //   self.errors.add({
+        //     field: 'activationCode',
+        //     msg: 'unknown error. Please try again later'
+        //   }); 
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
-         
-         ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
-         let user = care.data
+        ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
+        let user = care.data
         let token = care.data.token
-         self.$store.state.token = token;
+        self.$store.state.token = token;
         self.$store.state.user.userdata = user;
-        window.getApp.$emit('APP_EMAIL_ADD_SUCCESS');
-        //  this.$router.push('/csystem/redirect')
-        //  self.$emit('close')
+        window.getApp.$emit('APP_SOME_SUCCESS', 'Profile has been activated');
+        self.$emit('close')
       }
     },
     validateField(field) {
@@ -269,12 +238,12 @@ input, textarea, select, button {
     margin: 0em;
     font: 400 13.3333px Arial;
 }
-input.is-danger {
-    border-color:#ff3860;
-}
 /* user agent stylesheet */
 input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
+}
+input.is-danger {
+    border-color:#ff3860;
 }
 .control {
     clear: both;

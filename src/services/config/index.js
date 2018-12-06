@@ -15,10 +15,10 @@ const config = {
   defaultPath: 'csystem/home',
   defaultAppName: 'CSYMAPP',
   version: '3.0.1',
-  apiRoot: 'https://api.csymapp.com/',
-  // apiRoot: 'http://localhost:3000/',
-  myRoot: 'https://web.csymapp.com'
-  // myRoot: 'http://localhost:8080/'
+  // apiRoot: 'https://api.csymapp.com/',
+  apiRoot: 'http://localhost:3000/',
+  // myRoot: 'https://web.csymapp.com'
+  myRoot: 'http://localhost:8080/'
 
 };
 

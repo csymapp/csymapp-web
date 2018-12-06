@@ -1,36 +1,30 @@
 <template>
   <v-card :color=color>
     <v-card-title :color=color>
-        <span class="headline"><v-icon left>fa-envelope</v-icon> Email Profile</span>
+        <span class="headline">Change Pin for Telephone Profile</span>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text xs12>
         <v-form xs12>
                     <b-field 
-                        :type="{'is-danger': errors.has('registeremail')}"
-                        :message="errors.first('registeremail')" xs12>
+                        :type="{'is-danger': errors.has('changepin')}"
+                        :message="errors.first('changepin')">
                         
-                        <b-input v-model="user.registeremail" name="registeremail" v-validate="'required|email'"  placeholder="Email" xs12 lg12/>
-                    </b-field>
-                    <b-field 
-                        :type="{'is-danger': errors.has('registerpassword')}"
-                        :message="errors.first('registerpassword')">
-                        
-                        <b-input v-model="user.registerpassword" name="registerpassword" v-validate="'required|min:6'"  placeholder="Password" type="password" ref="registerpassword"/>
+                        <b-input v-model="user.changepin" name="changepin" v-validate="'required|length:4'"  placeholder="Pin" type="password" ref="changepin"/>
                     </b-field>
                     
                     <b-field 
-                        :type="{'is-danger': errors.has('Confirmpassword')}"
-                        :message="errors.first('Confirmpassword')">
+                        :type="{'is-danger': errors.has('Confirmchangepin')}"
+                        :message="errors.first('Confirmchangepin')">
                         
-                        <b-input v-model="user.confirmpassword" name="Confirmpassword" v-validate="'required|min:6|confirmed:registerpassword'"  placeholder="Confirm Password" type="password"/>
+                        <b-input v-model="user.Confirmchangepin" name="Confirmchangepin" v-validate="'required|confirmed:changepin'"  placeholder="Confirm Pin" type="password"/>
                     </b-field>
                   </v-form>
     </v-card-text>
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="white" flat @click="$emit('close')">Close</v-btn>
-        <v-btn color="white" flat @click="validateRegister()">Add Profile</v-btn>
+        <v-btn color="white" flat @click="validateChangePin()">Change Pin</v-btn>
     </v-card-actions>
     </v-card>  
 </template>
@@ -40,34 +34,25 @@
 import authService from '@/apps/csystem/services/auth'
 import to from 'await-to-js';
 
+
 const dict = {
   custom: {
-    email: {
-      required: 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
+    changepin: {
+      required: 'Please enter your pin',
+      length: 'Pin should be 4 characters'
     },
-    password: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    registeremail: {
-      required: () => 'Please enter your email address',
-      email: () => 'Please enter a valid email address'
-    },
-    registerpassword: {
-      min: 'Please enter atleast 6 characters',
-      required: () => 'Please enter your password'
-    },
-    Confirmpassword: {
-      required: () => 'Please enter your password again',
-      min: 'Please enter atleast 6 characters',
-      confirmed: 'Your passwords don\'t match'
+    Confirmchangepin: {
+      required: 'Please confirm your pin',
+      length: 'Pin should be 4 characters',
+      confirmed: 'Your pins don\'t match'
     }
   }
 };
+
 export default {
   props: {
     color: String,
+    thisphone: Number
   },
    components: {
     // VWidget
@@ -75,12 +60,11 @@ export default {
   data () {
     return {
       basic: {
-        dialog: false
+        dialog1: false
       },
       user: {
-      registeremail: '',
-      registerpassword: '',
-      confirmpassword: ''
+      changepin: '',
+      Confirmchangepin: ''
     },
     };
   },
@@ -88,14 +72,15 @@ export default {
     this.$validator.localize('en', dict);
   },
   methods: {
-    async validateRegister() {
+    async validateChangePin() {
+       
       let self = this
-      let fields = ['registeremail', 'registerpassword', 'Confirmpassword'];
+      let fields = [ 'changepin', 'Confirmchangepin'];
       let promises = fields.map(self.validateField);
       let [err, care] = await to(Promise.all(promises));
+      let phoneid = this.thisphone
       if(err) return;
-      let uid = authService().getUid(self.$store.state.user.userdata)
-      ;[err, care] = await to(authService().emailRegister({email:this.user.registeremail, password:this.user.registerpassword, cpassword:this.user.confirmpassword, state:this.$store.state, uid}))
+      ;[err, care] = await to(authService().changePin(self.$store.state, phoneid, this.user.changepin))
       if(err)
         try{
             let tmpErr =  err.data.error;
@@ -108,40 +93,36 @@ export default {
                 
                 for (let i in tmpErr) {
                   err = tmpErr[i]
-                  if(i === 'Email'){
-                    field = 'registeremail'
-                    err = tmpErr[i]
-                  }
                   if(i === 'Password')
-                    field = 'registerpassword'
+                    field = 'changepin'
                     
                   if(i === 'Cpassword')
-                    field = 'Confirmpassword'
+                    field = 'Confirmchangepin'
 
                 }
                   
               }
-          self.errors.add({
-            field,
-            msg: err
-          }); 
+            self.errors.add({
+                field,
+                msg: err
+            }); 
           window.getApp.$emit('ERROR_EVT', err);
           
         }catch(error) {
-          self.errors.add({
-            field: 'registerpassword',
-            msg: 'unknown error. Please try again later'
-          }); 
+        //   self.errors.add({
+        //     field: 'changepin',
+        //     msg: 'unknown error. Please try again later'
+        //   }); 
           window.getApp.$emit('ERROR_EVT','unknown error. Please try again later');
         }
       else {
-         
-         ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
-         let user = care.data
-        let token = care.data.token
-         self.$store.state.token = token;
-        self.$store.state.user.userdata = user;
-        window.getApp.$emit('APP_EMAIL_ADD_SUCCESS');
+         window.getApp.$emit('CHANGE_PWD_SUCCESS');
+         self.$emit('close')
+        //  ;[err, care] = await to(authService().loginusingToken(self.$store.state.token))
+        //  let user = care.data
+        // let token = care.data.token
+        //  self.$store.state.token = token;
+        // self.$store.state.user.userdata = user;
         //  this.$router.push('/csystem/redirect')
         //  self.$emit('close')
       }
@@ -269,12 +250,12 @@ input, textarea, select, button {
     margin: 0em;
     font: 400 13.3333px Arial;
 }
-input.is-danger {
-    border-color:#ff3860;
-}
 /* user agent stylesheet */
 input, textarea, select, button, meter, progress {
     -webkit-writing-mode: horizontal-tb !important;
+}
+input.is-danger {
+    border-color:#ff3860;
 }
 .control {
     clear: both;

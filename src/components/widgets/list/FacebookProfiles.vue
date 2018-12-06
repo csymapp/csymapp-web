@@ -3,7 +3,7 @@
   <v-card>
     <v-card-title>
     <v-toolbar card dense color="transparent">
-      <v-toolbar-title><h4>Facebook Profiles</h4></v-toolbar-title>
+      <v-toolbar-title><h4><v-icon left color="indigo">fa-facebook</v-icon> Facebook Profiles</h4></v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-tooltip bottom>

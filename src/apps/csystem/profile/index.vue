@@ -50,6 +50,17 @@
         </v-flex>        
         <v-flex lg2 sm6 xs12>
           <profile-box
+            icon="fa fa-phone"
+            :title=String(user.Telephones?user.Telephones.length:String(0))
+            :sub-title=profileString(user.Telephones)
+            color="primary" 
+            social="a telephone"  
+            togoto="/csystem/profile/telephone"    
+          >
+          </profile-box>             
+        </v-flex>   
+        <v-flex lg2 sm6 xs12>
+          <profile-box
             icon="fa fa-linkedin"
             :title=String(user.Linkedins?user.Linkedins.length:String(0))
             :sub-title=profileString(user.Linkedins)
@@ -229,6 +240,10 @@ export default {
         {
           name: 'Github',
           value: user.Githubs?user.Githubs.length : 0 
+        },
+        {
+          name: 'Phone',
+          value: user.Telephones?user.Telephones.length : 0 
         },
       ]
       return data;

@@ -28,6 +28,43 @@ class auth{
 		});
     
   }
+  async telephoneLogin(options) {
+    return new Promise(function(resolve, reject) {
+      let apiRoot = config.get('/apiRoot');
+      let url = apiRoot + 'csymapp/telephoneprofile/'
+      let params = {
+        "phone": options.phone,
+        "code":options.code,
+        "pin":options.pin,
+        "type":"login"
+      }
+		  axios.post(url, params)
+			.then(function (response) {
+				return resolve(response);
+			})
+			.catch(function (error) {
+				return reject(error.response || {data:{error:error.message}});
+			});
+		});
+    
+  }
+  
+  async getTelephoneCode(phone) {
+    return new Promise(function(resolve, reject) {
+      let apiRoot = config.get('/apiRoot');
+      let url = apiRoot + 'csymapp/telephoneprofile/'+phone
+     
+		  axios.get(url)
+			.then(function (response) {
+				return resolve(response);
+			})
+			.catch(function (error) {
+				return reject(error.response || {data:{error:error.message}});
+			});
+		});
+    
+  }
+
 
   async githubLogin(state) {
     let self = this,
@@ -197,6 +234,56 @@ class auth{
     }
     
   }
+  async phoneRegister(options) {
+    let self = this,
+      state = options.state,
+      token = self.getToken(state),
+      uid = options.uid
+    if(token === null)
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/user/'
+        let params = {
+          "phone": options.phone,
+          "pin":options.pin,
+          "cpin":options.cpin,
+          "profile":"phone"
+        }
+        console.log(params)
+        axios.post(url, params)
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+    else {
+      // console.log('having token....')
+    return new Promise(function(resolve, reject) {
+      let apiRoot = config.get('/apiRoot');
+      let url = apiRoot + 'csymapp/user/' + uid
+      let params = {
+        "phone": options.phone,
+        "pin":options.pin,
+        "cpin":options.cpin,
+        "profile":"phone"
+      }
+      let headers = {
+        'content-type': 'application/json',
+        'Authorization': `bearer ${token}`
+      }
+      axios.post(url, params,  {headers: headers})
+      .then(function (response) {
+        return resolve(response);
+      })
+      .catch(function (error) {
+        return reject(error.response || {data:{error:error.message}});
+      });
+    });
+    }
+    
+  }
 
   async fetchUser(options) {
     let self = this,
@@ -323,6 +410,35 @@ class auth{
         });
       });
   }
+
+  
+  async deactivateTelephone(state, puid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/telephoneprofile/' + puid
+        let params = {
+          "IsActive": false
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+
 
   
   async inactivateGoogle(state, guid) {
@@ -462,9 +578,36 @@ class auth{
       });
   }
 
+  async activateTelephone(state, puid, Code) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/telephoneprofile/' + puid
+        let params = {
+          "IsActive": true,
+          Code
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
 
 
 
+  
 
   async activateEmail(state, emailid) {
     let self = this,
@@ -491,6 +634,8 @@ class auth{
         });
       });
   }
+
+
   
 
   async activateGoogle(state, emailid) {
@@ -656,8 +801,33 @@ class auth{
       });
   }
 
+  
+  async changePin(state, phoneid, pin) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
 
-
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/telephoneprofile/' + phoneid
+        let params = {
+          "Pin": pin,
+          "Cpin": pin
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.patch(url, params,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
   
   async deleteEmail(state, emailid) {
     let self = this,
@@ -668,6 +838,32 @@ class auth{
       return new Promise(function(resolve, reject) {
         let apiRoot = config.get('/apiRoot');
         let url = apiRoot + 'csymapp/emailprofile/' + emailid
+        let params = {
+          "IsActive": true
+        }
+        let headers = {
+          'content-type': 'application/json',
+          'Authorization': `bearer ${token}`
+        }
+        axios.delete(url,  {headers: headers})
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          return reject(error.response || {data:{error:error.message}});
+        });
+      });
+  }
+
+  async deleteTelephone(state, puid) {
+    let self = this,
+      token = self.getToken(state),
+      uid = state.user.userdata.uid
+      if(token === null) token = '';
+
+      return new Promise(function(resolve, reject) {
+        let apiRoot = config.get('/apiRoot');
+        let url = apiRoot + 'csymapp/telephoneprofile/' + puid
         let params = {
           "IsActive": true
         }

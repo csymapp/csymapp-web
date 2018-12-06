@@ -6,7 +6,7 @@
               </v-dialog>
     <v-card-title>
     <v-toolbar card dense color="transparent">
-      <v-toolbar-title><h4>Email Profiles</h4></v-toolbar-title>
+      <v-toolbar-title><h4><v-icon left color="primary">fa-envelope</v-icon> Email Profiles</h4></v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-tooltip bottom>
@@ -161,7 +161,6 @@ export default {
           else 
             [err, care] = await to(authService().activateEmail(self.$store.state, emailid))
 
-          // console.log(care)
           if(err)
             try{
               window.getApp.$emit('ERROR_EVT', err.data.error);

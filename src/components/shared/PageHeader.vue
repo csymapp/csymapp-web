@@ -1,7 +1,7 @@
 <template>
   <v-layout row class="align-center layout px-4 pt-4 app--page-header">
     <div class="page-header-left">
-      <h3 class="pr-3">{{title}}</h3>
+      <h3 class="pr-3"><a @click="goto('/'+title)">{{ title }}</a></h3>
     </div>
     <v-breadcrumbs divider="|">
       <v-breadcrumbs-item>
@@ -14,7 +14,7 @@
     <v-spacer></v-spacer>
     <div class="page-header-right">
       <v-btn icon>
-        <v-icon class="text--secondary">refresh</v-icon>
+        <v-icon class="text--secondary" @click="$router.push('/csystem/redirect')">refresh</v-icon>
       </v-btn>
     </div>
   </v-layout>  
@@ -72,8 +72,6 @@ export default {
       
         breadcrumbs.reverse().pop()
         breadcrumbs.reverse()
-        console.log('breads....')
-        console.log(breadcrumbs)
       
       return breadcrumbs;
     },    

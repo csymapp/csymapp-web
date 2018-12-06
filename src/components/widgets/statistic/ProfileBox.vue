@@ -21,6 +21,7 @@
                   <FacebookAddition @close="basic.dialog = false" v-else-if="social==='a facebook'" :color=color ></FacebookAddition>
                   <TwitterAddition @close="basic.dialog = false" v-else-if="social==='a twitter'" :color=color ></TwitterAddition>
                   <LinkedinAddition @close="basic.dialog = false" v-else-if="social==='a linkedin'" :color=color ></LinkedinAddition>
+                  <TelephoneAddition @close="basic.dialog = false" v-else-if="social==='a telephone'" :color=color ></TelephoneAddition>
                   <StillWorking @close="basic.dialog = false" v-else :color=color></StillWorking>
                 </v-dialog>
               </div>
@@ -45,6 +46,7 @@ import GoogleAddition from '@/components/widgets/form/GoogleAddition';
 import FacebookAddition from '@/components/widgets/form/FacebookAddition';
 import TwitterAddition from '@/components/widgets/form/TwitterAddition';
 import LinkedinAddition from '@/components/widgets/form/LinkedinAddition';
+import TelephoneAddition from '@/components/widgets/form/TelephoneAddition';
 import StillWorking from '@/components/widgets/form/stillWorking';
 export default {
   props: {
@@ -63,7 +65,8 @@ export default {
     GoogleAddition,
     FacebookAddition,
     TwitterAddition,
-    LinkedinAddition
+    LinkedinAddition,
+    TelephoneAddition
   },
   data () {
     return {

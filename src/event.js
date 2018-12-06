@@ -7,9 +7,24 @@ export default [
         color: 'green',
         text: 'Logged in successfully.'
       };
-      this.$router.push({ path: '/' });
+      if(window.history.length < 3)
+        this.$router.push({ path: '/' });
+      else this.$router.go(-1)
     }
   },
+  
+  {
+    name: 'APP_SOME_SUCCESS',
+    callback: function (text) {
+      this.snackbar = {
+        show: true,
+        color: 'green',
+        text
+      };
+      this.$router.push({ path: '/csystem/redirect' });
+    }
+  },
+
   {
     name: 'APP_REGISTER_SUCCESS',
     callback: function (e) {
@@ -22,6 +37,17 @@ export default [
     }
   },
   {
+    name: 'APP_ADD_ACCOUNT_SUCCESS',
+    callback: function (e) {
+      this.snackbar = {
+        show: true,
+        color: 'green',
+        text: 'Profile added successfully.'
+      };
+      this.$router.push({ path: '/csystem/redirect' });
+    }
+  },
+  {
     name: 'APP_EMAIL_ADD_SUCCESS',
     callback: function (e) {
       this.snackbar = {
@@ -29,6 +55,7 @@ export default [
         color: 'green',
         text: 'Account added successfully.'
       };
+      this.$router.push({ path: '/csystem/redirect' });
     }
   },
   {
@@ -78,7 +105,7 @@ export default [
         color: 'green',
         text: 'Logged out successfully.'
       };
-      this.$router.replace({ path: '/csystem/redirect' });
+      this.$router.push({ path: '/csystem/redirect' });
     }
   },
   {
