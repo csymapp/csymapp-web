@@ -14,9 +14,9 @@
                   slider-color="black"
                   grow
                 >
-                  <v-tab :key="1" href="#tab-1">New Email</v-tab>
+                  <v-tab :key="1" href="#tab-1">Email+</v-tab>
                   <v-tab :key="2" href="#tab-2">Login</v-tab>
-                  <v-tab :key="4" href="#tab-4">New Phone</v-tab>
+                  <v-tab :key="4" href="#tab-4">Phone+</v-tab>
                   <v-tab :key="3" href="#tab-3">Phone</v-tab>
               </v-tabs>
               <v-spacer></v-spacer>

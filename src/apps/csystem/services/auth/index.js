@@ -330,7 +330,7 @@ class auth{
     if(tuser.Facebooks) 
       for(let i in tuser.Facebooks)
         emails.push(tuser.Facebooks[i].Email)
-    console.log(tuser)
+    // console.log(tuser)
     if(emails.length) return emails[Math.floor(Math.random()*emails.length)];
     return user.defaultEmail;
 
